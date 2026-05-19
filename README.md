@@ -18,24 +18,6 @@ Install from GitHub with the `skills` CLI:
 npx skills add dasomx/leia-docs --skill leia-api-access
 ```
 
-Install for Pi specifically:
-
-```bash
-npx skills add dasomx/leia-docs --skill leia-api-access -a pi
-```
-
-Install from a local checkout:
-
-```bash
-npx skills add . --skill leia-api-access
-```
-
-List available skills in this repo:
-
-```bash
-npx skills add . --list
-```
-
 ## Development
 
 Run the development server:
