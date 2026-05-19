@@ -1,0 +1,66 @@
+---
+title: AI Content Generation
+description: How LEIA generates lecture content, quizzes, slides, and video.
+---
+
+LEIA uses multiple AI models and pipelines to produce complete learning experiences from structured course data.
+
+## Lesson Content
+
+The lesson generation pipeline produces full lecture content including:
+
+- **Overview & learning outcomes** — What the student will learn
+- **Lecture body** — MDX-formatted text with code blocks, diagrams, and interactive elements
+- **Knowledge checks** — Inline quizzes and exercises
+- **Key terms** — Glossary definitions for important concepts
+
+```http
+POST /api/v1/lessons/{lessonId}/generate-content
+POST /api/v1/courses/{courseId}/lessons/generate-all
+```
+
+## Slide Generation
+
+Slides are generated using the **nano-banana** illustrated method. You choose a visual template and LEIA produces a slide deck with:
+
+- Per-slide illustrations matching the template style
+- Narration scripts synchronized to each slide
+- Voice-over audio tracks
+
+Available templates: `whiteboard`, `flat-illustration-corporate`, `doodle-notebook`, `handwrittenchalkcasual`
+
+```http
+POST /api/v1/courses/{courseId}/lessons/generate-slides
+```
+
+## Video Export
+
+Once slides are ready (`slidesStatus: READY`), export them as MP4 videos:
+
+```http
+POST /api/v1/courses/{courseId}/lessons/generate-videos
+```
+
+## Job Tracking
+
+All generation tasks run asynchronously. Monitor progress via:
+
+```http
+GET /api/v1/courses/{courseId}/jobs
+GET /api/v1/jobs/{jobId}
+```
+
+## Language Configuration
+
+Control the output language with the `languageConfig` object available on most endpoints:
+
+```json
+{
+  "languageConfig": {
+    "contentLanguage": "ko",
+    "tutorLanguage": "ko",
+    "supportedLanguages": ["ko", "en"],
+    "culturalContext": "Korean workplace training"
+  }
+}
+```

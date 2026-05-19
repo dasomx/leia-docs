@@ -1,0 +1,41 @@
+---
+title: LEIA Partner API v1
+description: REST API for programmatic course creation. Server-to-server integration with per-organization API keys.
+index: true
+---
+
+The LEIA Partner API enables institutions to build complete courses programmatically — from parsing descriptions through generating content, slides, and video exports.
+
+## Authentication
+
+All requests require a LEIA API key with the `leia_sk_` prefix:
+
+```
+Authorization: Bearer leia_sk_...
+```
+
+API keys are scoped to a single organization and service user. Create and manage keys from the LEIA Creator Dashboard under **Workspace → API Keys**.
+
+## Rate Limiting
+
+- **1,000 requests** per key per hour
+- `429 Too Many Requests` when exceeded
+
+## Idempotency
+
+All `POST` endpoints support the `Idempotency-Key` header for safe retries. Keys expire after 24 hours.
+
+## Base URL
+
+```
+https://api.leia.io/api/v1
+```
+
+## Quick Links
+
+<Cards>
+  <Card title="Course Creation" href="/docs/course-creation" />
+  <Card title="Content Generation" href="/docs/content-generation" />
+  <Card title="Parse Description" href="/docs/openapi/course-creation/parse-description" />
+  <Card title="Create Course" href="/docs/openapi/courses" />
+</Cards>

@@ -1,13 +1,27 @@
 ---
-title: Hello World
-description: Your first document
+title: LEIA Documentation
+description: Everything you need to integrate with the LEIA platform.
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+Welcome to the LEIA platform documentation. LEIA transforms educational content into interactive AI tutors, enabling partners to programmatically create courses, generate lessons, and produce learning-ready video presentations.
 
-## What is Next?
+## Getting Started
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card title="Partner API Reference" href="/docs/openapi" />
+  <Card title="Agent Skill Installation" href="/docs/agentic-api-workflow" />
+  <Card title="Course Creation Flow" href="/docs/course-creation" />
+  <Card title="AI Content Generation" href="/docs/content-generation" />
 </Cards>
+
+## What you can build
+
+- **Course Parsing** — Turn a natural-language description into a structured course outline
+- **Curriculum Generation** — AI-powered curriculum design with modules and lessons
+- **Lesson Content** — Auto-generate full lecture content with exercises and quizzes
+- **Slide Decks** — Produce illustrated presentation slides for every lesson
+- **Video Exports** — Render slides + narration into downloadable MP4 videos
+
+## Architecture
+
+LEIA exposes a versioned REST API at `https://api.leia.io/api/v1`. All endpoints are server-to-server, authenticated via per-organization API keys. The API is a stable facade over the internal tRPC procedures — backwards-compatible and designed for partner LMS integrations.

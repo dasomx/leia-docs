@@ -1,0 +1,62 @@
+---
+title: Agent Skill Installation
+description: Install the LEIA Partner API agent skill with the skills CLI.
+---
+
+LEIA Docs includes an installable agent skill for working with the LEIA Partner API.
+
+## Skill path
+
+```txt
+.agents/skills/leia-api-access/SKILL.md
+```
+
+## Install from GitHub
+
+```bash
+npx skills add dasomx/leia-docs --skill leia-api-access
+```
+
+## Install for Pi
+
+```bash
+npx skills add dasomx/leia-docs --skill leia-api-access -a pi
+```
+
+## Install from local checkout
+
+From the `leia-docs` repository root:
+
+```bash
+npx skills add . --skill leia-api-access
+```
+
+## Verify discovery
+
+```bash
+npx skills add . --list
+```
+
+Expected result:
+
+```txt
+Found 1 skill
+Available Skills
+  leia-api-access
+```
+
+## Example usage
+
+After installing, ask your agent to use the LEIA Partner API skill:
+
+```txt
+Use the LEIA Partner API to create a 6-lesson Korean course about practical SQL for data analysts. Do not use the YOLO endpoint. Show the request sequence and polling steps.
+```
+
+Another example:
+
+```txt
+I have courseId course_123 and lesson IDs cmp1, cmp2. Generate slides with the whiteboard template, then export videos through the LEIA API.
+```
+
+The skill guides the agent toward the reviewed multi-step API workflow: parse, generate curriculum, review curriculum, create course, generate lessons, and poll jobs.

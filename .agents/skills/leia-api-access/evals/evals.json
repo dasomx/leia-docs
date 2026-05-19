@@ -1,0 +1,23 @@
+{
+  "skill_name": "leia-api-access",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use the LEIA Partner API to create a 6-lesson Korean course about practical SQL for data analysts. Don't use the YOLO endpoint. Show me the exact request sequence and what you'd poll.",
+      "expected_output": "A multi-step Partner API plan using parse-description, curriculum-jobs, curriculum polling, course creation, batch lesson generation, and job polling. It should include languageConfig for Korean, idempotency keys, and no /courses/create-full route.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My curriculum generation returned 10 modules and 60 lessons, but I asked for a short 6 lesson course. What should the API agent do next before POST /courses?",
+      "expected_output": "Advice to review and manually curate/edit the curriculum before course creation, selecting or rewriting modules/lessons down to the requested size, with checks for slugs, lesson types, language, and coverage.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Generate slides and then videos through the LEIA API for lessons cmp1 and cmp2 in course course_123. Use the whiteboard style. What endpoints and polling should I use?",
+      "expected_output": "Instructions to call batch generate-slides with template whiteboard and no method field, poll jobs or verify slidesStatus READY, then call batch generate-videos and poll video export jobs. Mention that local video export needs the worker running.",
+      "files": []
+    }
+  ]
+}

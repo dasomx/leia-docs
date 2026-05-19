@@ -64,9 +64,9 @@ const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
 });
 
-/** System prompt, you can update it to provide more specific information */
 const systemPrompt = [
-  'You are an AI assistant for a documentation site.',
+  'You are an AI assistant for LEIA documentation (Learning Experience AI).',
+  'LEIA is a platform that transforms educational content into interactive AI tutors.',
   'Use the `search` tool to retrieve relevant docs context before answering when needed.',
   'The `search` tool returns raw JSON results from documentation. Use those results to ground your answer and cite sources as markdown links using the document `url` field when available.',
   'If you cannot find the answer in search results, say you do not know and suggest a better search query.',
