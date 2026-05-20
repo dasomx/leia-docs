@@ -24,8 +24,12 @@
     }
   ],
   "security": [
-    { "bearerAuth": [] },
-    { "apiKeyHeader": [] }
+    {
+      "bearerAuth": []
+    },
+    {
+      "apiKeyHeader": []
+    }
   ],
   "components": {
     "securitySchemes": {
@@ -57,9 +61,14 @@
           },
           "supportedLanguages": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Additional languages supported in the course",
-            "example": ["ko", "en"]
+            "example": [
+              "ko",
+              "en"
+            ]
           },
           "culturalContext": {
             "type": "string",
@@ -68,16 +77,96 @@
           }
         }
       },
+      "CourseUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "The title of the course",
+            "example": "Ontology Engineering and AI Knowledge Systems"
+          },
+          "slug": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^[a-z0-9-]+$",
+            "description": "A unique, URL-friendly slug containing only lowercase alphanumeric characters and hyphens",
+            "example": "ontology-engineering-ai-knowledge-systems"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "nullable": true,
+            "description": "A detailed description of the course content and learning goals",
+            "example": "Learn practical ontology design, semantic web standards, and knowledge graph engineering."
+          },
+          "contentLanguage": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 10,
+            "description": "Primary language for generated course content (ISO 639-1)",
+            "example": "en"
+          },
+          "tutorLanguage": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 10,
+            "nullable": true,
+            "description": "Language for AI tutor interactions (ISO 639-1)",
+            "example": "en"
+          },
+          "supportedLanguages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 10
+            },
+            "description": "Additional languages supported in the course",
+            "example": ["en", "ko"]
+          },
+          "culturalContext": {
+            "type": "string",
+            "maxLength": 1000,
+            "nullable": true,
+            "description": "Cultural framing and localized examples",
+            "example": "Corporate professional training"
+          },
+          "isPrivate": {
+            "type": "boolean",
+            "description": "Whether the course is private to enrolled members only",
+            "example": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "An HTTPS URL to a thumbnail image for the course",
+            "example": "https://example.com/course-thumbnail.png"
+          }
+        }
+      },
       "Error": {
         "type": "object",
-        "required": ["error"],
+        "required": [
+          "error"
+        ],
         "properties": {
           "error": {
             "type": "object",
-            "required": ["code", "message"],
+            "required": [
+              "code",
+              "message"
+            ],
             "properties": {
-              "code": { "type": "string" },
-              "message": { "type": "string" }
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
             }
           }
         }
@@ -108,7 +197,9 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["url"],
+              "required": [
+                "url"
+              ],
               "properties": {
                 "url": {
                   "type": "string",
@@ -122,58 +213,155 @@
             "type": "string",
             "description": "Existing draft course ID to update"
           },
-          "languageConfig": { "$ref": "#/components/schemas/LanguageConfig" }
+          "languageConfig": {
+            "$ref": "#/components/schemas/LanguageConfig"
+          }
         }
       },
       "ParseDescriptionResponse": {
         "type": "object",
         "properties": {
-          "success": { "type": "boolean" },
+          "success": {
+            "type": "boolean"
+          },
           "data": {
             "type": "object",
             "properties": {
-              "title": { "type": "string" },
-              "slug": { "type": "string" },
-              "description": { "type": "string" },
-              "targetAudience": { "type": "string" },
-              "difficulty": { "type": "string" },
-              "duration": { "type": "string" },
-              "focusAreas": { "type": "array", "items": { "type": "string" } },
-              "learningObjectives": { "type": "array", "items": { "type": "string" } },
-              "tone": { "type": "string" },
-              "includeExercises": { "type": "boolean" },
-              "includeQuizzes": { "type": "boolean" },
-              "includeProjects": { "type": "boolean" },
-              "contentLanguage": { "type": "string" },
-              "lessonType": { "type": "string" },
-              "lessonLength": { "type": "string" },
-              "contentLevel": { "type": "string" }
+              "title": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "targetAudience": {
+                "type": "string"
+              },
+              "difficulty": {
+                "type": "string"
+              },
+              "duration": {
+                "type": "string"
+              },
+              "focusAreas": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "learningObjectives": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "tone": {
+                "type": "string"
+              },
+              "includeExercises": {
+                "type": "boolean"
+              },
+              "includeQuizzes": {
+                "type": "boolean"
+              },
+              "includeProjects": {
+                "type": "boolean"
+              },
+              "contentLanguage": {
+                "type": "string"
+              },
+              "lessonType": {
+                "type": "string"
+              },
+              "lessonLength": {
+                "type": "string"
+              },
+              "contentLevel": {
+                "type": "string"
+              }
             }
           },
-          "message": { "type": "string" },
-          "researchContext": { "type": "object", "nullable": true },
-          "newCourseCreationId": { "type": "string", "description": "Draft course ID" }
+          "message": {
+            "type": "string"
+          },
+          "researchContext": {
+            "type": "object",
+            "nullable": true
+          },
+          "newCourseCreationId": {
+            "type": "string",
+            "description": "Draft course ID"
+          }
         }
       },
       "CurriculumJobRequest": {
         "type": "object",
-        "required": ["instructions"],
+        "required": [
+          "instructions"
+        ],
         "properties": {
-          "draftCourseId": { "type": "string" },
+          "draftCourseId": {
+            "type": "string"
+          },
           "instructions": {
             "type": "object",
-            "required": ["courseTitle", "difficulty", "tone", "includeExercises", "includeQuizzes", "includeProjects"],
+            "required": [
+              "courseTitle",
+              "difficulty",
+              "tone",
+              "includeExercises",
+              "includeQuizzes",
+              "includeProjects"
+            ],
             "properties": {
-              "courseTitle": { "type": "string" },
-              "targetAudience": { "type": "string" },
-              "duration": { "type": "string" },
-              "difficulty": { "type": "string", "enum": ["beginner", "intermediate", "advanced"] },
-              "tone": { "type": "string", "enum": ["formal", "casual", "conversational"] },
-              "includeExercises": { "type": "boolean" },
-              "includeQuizzes": { "type": "boolean" },
-              "includeProjects": { "type": "boolean" },
-              "focusAreas": { "type": "array", "items": { "type": "string" } },
-              "learningObjectives": { "type": "array", "items": { "type": "string" } }
+              "courseTitle": {
+                "type": "string"
+              },
+              "targetAudience": {
+                "type": "string"
+              },
+              "duration": {
+                "type": "string"
+              },
+              "difficulty": {
+                "type": "string",
+                "enum": [
+                  "beginner",
+                  "intermediate",
+                  "advanced"
+                ]
+              },
+              "tone": {
+                "type": "string",
+                "enum": [
+                  "formal",
+                  "casual",
+                  "conversational"
+                ]
+              },
+              "includeExercises": {
+                "type": "boolean"
+              },
+              "includeQuizzes": {
+                "type": "boolean"
+              },
+              "includeProjects": {
+                "type": "boolean"
+              },
+              "focusAreas": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "learningObjectives": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           },
           "sourceFileUrl": {
@@ -181,63 +369,164 @@
             "format": "uri",
             "description": "Remote HTTPS URL for source content"
           },
-          "enableResearch": { "type": "boolean" },
-          "languageConfig": { "$ref": "#/components/schemas/LanguageConfig" }
+          "enableResearch": {
+            "type": "boolean"
+          },
+          "languageConfig": {
+            "$ref": "#/components/schemas/LanguageConfig"
+          }
         }
       },
       "CurriculumJobResponse": {
         "type": "object",
         "properties": {
-          "jobId": { "type": "string" },
-          "newCourseCreationId": { "type": "string" }
+          "jobId": {
+            "type": "string"
+          },
+          "newCourseCreationId": {
+            "type": "string"
+          }
         }
       },
       "CurriculumJobStatusResponse": {
         "type": "object",
         "properties": {
-          "jobId": { "type": "string" },
-          "status": { "type": "string", "enum": ["QUEUED", "PROCESSING", "COMPLETED", "FAILED"] },
-          "phase": { "type": "string" },
-          "progress": { "type": "integer", "minimum": 0, "maximum": 100 },
-          "errorReason": { "type": "string", "nullable": true },
-          "result": { "type": "object", "nullable": true },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "QUEUED",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED"
+            ]
+          },
+          "phase": {
+            "type": "string"
+          },
+          "progress": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "errorReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "CreateCourseRequest": {
         "type": "object",
-        "required": ["title", "curriculum"],
+        "required": [
+          "title",
+          "curriculum"
+        ],
         "properties": {
-          "title": { "type": "string", "description": "Course title" },
-          "slug": { "type": "string", "description": "URL slug (auto-generated if omitted)" },
-          "description": { "type": "string" },
-          "draftCourseId": { "type": "string" },
+          "title": {
+            "type": "string",
+            "description": "Course title"
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL slug (auto-generated if omitted)"
+          },
+          "description": {
+            "type": "string"
+          },
+          "draftCourseId": {
+            "type": "string"
+          },
           "curriculum": {
             "type": "object",
-            "required": ["modules"],
+            "required": [
+              "modules"
+            ],
             "properties": {
               "modules": {
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["title", "lessons"],
+                  "required": [
+                    "title",
+                    "lessons"
+                  ],
                   "properties": {
-                    "title": { "type": "string" },
-                    "description": { "type": "string" },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
                     "lessons": {
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "required": ["title", "slug"],
+                        "required": [
+                          "title",
+                          "slug"
+                        ],
                         "properties": {
-                          "title": { "type": "string" },
-                          "slug": { "type": "string" },
-                          "description": { "type": "string" },
-                          "type": { "type": "string", "enum": ["LECTURE", "QUIZ", "GRADED_QUIZ", "PROJECT", "ASSIGNMENT", "PODCAST", "DISCUSSION", "READING", "LAB", "WORKSHOP"] },
-                          "lessonLength": { "type": "string", "enum": ["SHORT", "MEDIUM", "LONG"] },
-                          "contentLevel": { "type": "string", "enum": ["ELEMENTARY", "MIDDLE", "COLLEGE", "PROFESSIONAL"] },
-                          "learningOutcomes": { "type": "array", "items": { "type": "string" } }
+                          "title": {
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "LECTURE",
+                              "QUIZ",
+                              "GRADED_QUIZ",
+                              "PROJECT",
+                              "ASSIGNMENT",
+                              "PODCAST",
+                              "DISCUSSION",
+                              "READING",
+                              "LAB",
+                              "WORKSHOP"
+                            ]
+                          },
+                          "lessonLength": {
+                            "type": "string",
+                            "enum": [
+                              "SHORT",
+                              "MEDIUM",
+                              "LONG"
+                            ]
+                          },
+                          "contentLevel": {
+                            "type": "string",
+                            "enum": [
+                              "ELEMENTARY",
+                              "MIDDLE",
+                              "COLLEGE",
+                              "PROFESSIONAL"
+                            ]
+                          },
+                          "learningOutcomes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
                         }
                       }
                     }
@@ -247,13 +536,19 @@
               "metadata": {
                 "type": "object",
                 "properties": {
-                  "description": { "type": "string" },
-                  "estimatedTotalHours": { "type": "number" }
+                  "description": {
+                    "type": "string"
+                  },
+                  "estimatedTotalHours": {
+                    "type": "number"
+                  }
                 }
               }
             }
           },
-          "languageConfig": { "$ref": "#/components/schemas/LanguageConfig" }
+          "languageConfig": {
+            "$ref": "#/components/schemas/LanguageConfig"
+          }
         }
       },
       "LessonGenerationRequest": {
@@ -263,7 +558,9 @@
             "type": "string",
             "description": "Additional instructions for content generation"
           },
-          "languageConfig": { "$ref": "#/components/schemas/LanguageConfig" }
+          "languageConfig": {
+            "$ref": "#/components/schemas/LanguageConfig"
+          }
         }
       },
       "SlidesNarrationRequest": {
@@ -272,55 +569,100 @@
           "options": {
             "type": "object",
             "properties": {
-              "slideCount": { "type": "integer", "minimum": 3, "maximum": 15, "example": 8 },
-              "language": { "type": "string", "example": "en" },
-              "voice": { "type": "string", "example": "alloy" },
-              "template": { "type": "string", "description": "Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate')" }
+              "slideCount": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 15,
+                "example": 8
+              },
+              "language": {
+                "type": "string",
+                "example": "en"
+              },
+              "voice": {
+                "type": "string",
+                "example": "alloy"
+              },
+              "template": {
+                "type": "string",
+                "description": "Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate')"
+              }
             }
           },
-          "languageConfig": { "$ref": "#/components/schemas/LanguageConfig" }
+          "languageConfig": {
+            "$ref": "#/components/schemas/LanguageConfig"
+          }
         }
       },
       "BatchLessonGenerationRequest": {
         "type": "object",
-        "required": ["lessonIds"],
+        "required": [
+          "lessonIds"
+        ],
         "properties": {
           "lessonIds": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Lesson IDs to generate content for"
           },
-          "customInstructions": { "type": "string" },
-          "languageConfig": { "$ref": "#/components/schemas/LanguageConfig" }
+          "customInstructions": {
+            "type": "string"
+          },
+          "languageConfig": {
+            "$ref": "#/components/schemas/LanguageConfig"
+          }
         }
       },
       "BatchSlidesGenerationRequest": {
         "type": "object",
-        "required": ["lessonIds"],
+        "required": [
+          "lessonIds"
+        ],
         "properties": {
           "lessonIds": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Lesson IDs to generate slides for"
           },
           "options": {
             "type": "object",
             "properties": {
-              "slideCount": { "type": "integer", "minimum": 3, "maximum": 15, "example": 6 },
-              "language": { "type": "string", "example": "en" },
-              "template": { "type": "string", "description": "Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate', 'doodle-notebook', 'handwrittenchalkcasual')" }
+              "slideCount": {
+                "type": "integer",
+                "minimum": 3,
+                "maximum": 15,
+                "example": 6
+              },
+              "language": {
+                "type": "string",
+                "example": "en"
+              },
+              "template": {
+                "type": "string",
+                "description": "Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate', 'doodle-notebook', 'handwrittenchalkcasual')"
+              }
             }
           },
-          "languageConfig": { "$ref": "#/components/schemas/LanguageConfig" }
+          "languageConfig": {
+            "$ref": "#/components/schemas/LanguageConfig"
+          }
         }
       },
       "BatchVideoGenerationRequest": {
         "type": "object",
-        "required": ["lessonIds"],
+        "required": [
+          "lessonIds"
+        ],
         "properties": {
           "lessonIds": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "Lesson IDs to export as video (must have slidesStatus: READY)"
           }
         }
@@ -328,39 +670,270 @@
       "CourseJob": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "type": { "type": "string", "enum": ["LESSON_GENERATION", "SLIDES_GENERATION", "VIDEO_EXPORT", "PDF_PROCESSING", "PODCAST_GENERATION", "ASSIGNMENT_GENERATION"] },
-          "status": { "type": "string", "enum": ["QUEUED", "PROCESSING", "COMPLETED", "FAILED", "RETRYING"] },
-          "progress": { "type": "integer" },
-          "errorReason": { "type": "string", "nullable": true },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "LESSON_GENERATION",
+              "SLIDES_GENERATION",
+              "VIDEO_EXPORT",
+              "PDF_PROCESSING",
+              "PODCAST_GENERATION",
+              "ASSIGNMENT_GENERATION"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "QUEUED",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED",
+              "RETRYING"
+            ]
+          },
+          "progress": {
+            "type": "integer"
+          },
+          "errorReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "RagProcessingStatus": {
         "type": "object",
         "properties": {
-          "isProcessing": { "type": "boolean" },
-          "totalDocuments": { "type": "integer" },
-          "completedCount": { "type": "integer" },
-          "failedCount": { "type": "integer" },
+          "isProcessing": {
+            "type": "boolean"
+          },
+          "totalDocuments": {
+            "type": "integer"
+          },
+          "completedCount": {
+            "type": "integer"
+          },
+          "failedCount": {
+            "type": "integer"
+          },
           "processingDocuments": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "id": { "type": "string" },
-                "fileName": { "type": "string" },
-                "status": { "type": "string" }
+                "id": {
+                  "type": "string"
+                },
+                "fileName": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
               }
             }
+          }
+        }
+      },
+      "PdfExportRequest": {
+        "type": "object",
+        "properties": {
+          "lessonIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of specific lesson IDs to export. If empty or omitted, exports all valid lecture lessons in the course."
+          }
+        }
+      },
+      "PdfExportResponse": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "The background job ID of the PDF export process."
+          }
+        }
+      },
+      "PdfExportStatusResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "QUEUED",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED"
+            ]
+          },
+          "progress": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "result": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "downloadUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "lessonCount": {
+                "type": "integer"
+              },
+              "downloadFileName": {
+                "type": "string"
+              },
+              "downloadKind": {
+                "type": "string",
+                "enum": [
+                  "pdf",
+                  "zip"
+                ]
+              },
+              "error": {
+                "type": "string"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "PdfExportHistoryResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "COMPLETED"
+              ]
+            },
+            "lessonIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "result": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "downloadUrl": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "lessonCount": {
+                  "type": "integer"
+                },
+                "downloadFileName": {
+                  "type": "string"
+                },
+                "downloadKind": {
+                  "type": "string",
+                  "enum": [
+                    "pdf",
+                    "zip"
+                  ]
+                }
+              }
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "completedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      },
+      "RagDocumentUploadResponse": {
+        "type": "object",
+        "required": [
+          "fileId",
+          "documentId",
+          "fileName",
+          "mimeType",
+          "fileSize",
+          "publicUrl",
+          "status"
+        ],
+        "properties": {
+          "fileId": {
+            "type": "string"
+          },
+          "documentId": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "fileSize": {
+            "type": "integer"
+          },
+          "publicUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED"
+            ]
+          },
+          "courseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "draftCourseId": {
+            "type": "string",
+            "nullable": true
           }
         }
       }
     },
     "headers": {
       "IdempotencyKey": {
-        "schema": { "type": "string", "example": "req_abc123" },
+        "schema": {
+          "type": "string",
+          "example": "req_abc123"
+        },
         "description": "Idempotency key for safe retries. Supported on all POST endpoints."
       }
     },
@@ -369,9 +942,14 @@
         "description": "Unauthorized — missing, invalid, or revoked API key",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
             "example": {
-              "error": { "code": "UNAUTHORIZED", "message": "Valid LEIA API key required" }
+              "error": {
+                "code": "UNAUTHORIZED",
+                "message": "Valid LEIA API key required"
+              }
             }
           }
         }
@@ -380,9 +958,14 @@
         "description": "Forbidden — valid key but insufficient permissions",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
             "example": {
-              "error": { "code": "FORBIDDEN", "message": "API key service user must be a CREATOR user" }
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "API key service user must be a CREATOR user"
+              }
             }
           }
         }
@@ -391,7 +974,9 @@
         "description": "Not found",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -399,9 +984,34 @@
         "description": "Idempotency conflict",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
             "example": {
-              "error": { "code": "IDEMPOTENCY_CONFLICT", "message": "Idempotency-Key was reused with a different request body" }
+              "error": {
+                "code": "IDEMPOTENCY_CONFLICT",
+                "message": "Idempotency-Key was reused with a different request body"
+              }
+            }
+          }
+        }
+      },
+      "413": {
+        "description": "Payload too large",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "415": {
+        "description": "Unsupported media type",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
             }
           }
         }
@@ -410,7 +1020,9 @@
         "description": "Rate limit exceeded",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       },
@@ -418,22 +1030,46 @@
         "description": "Internal server error",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       }
     }
   },
   "tags": [
-    { "name": "Course Creation", "description": "Parse descriptions and generate curriculum" },
-    { "name": "Courses", "description": "Create and retrieve courses" },
-    { "name": "Lessons", "description": "Generate lesson content, slides, and video" },
-    { "name": "Jobs", "description": "Track background job status" }
+    {
+      "name": "Course Creation",
+      "description": "Parse descriptions and generate curriculum"
+    },
+    {
+      "name": "Courses",
+      "description": "Create and retrieve courses"
+    },
+    {
+      "name": "Lessons",
+      "description": "Generate lesson content, slides, and video"
+    },
+    {
+      "name": "Jobs",
+      "description": "Track background job status"
+    },
+    {
+      "name": "Exports",
+      "description": "Export course content as PDFs, video, or files"
+    },
+    {
+      "name": "RAG Documents",
+      "description": "Upload and monitor source documents for RAG processing"
+    }
   ],
   "paths": {
     "/course-creation/parse-description": {
       "post": {
-        "tags": ["Course Creation"],
+        "tags": [
+          "Course Creation"
+        ],
         "summary": "Parse course description",
         "description": "Parses a natural-language course description and/or remote source files into structured course form data.",
         "operationId": "parseCourseDescription",
@@ -441,13 +1077,17 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ParseDescriptionRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/ParseDescriptionRequest"
+              },
               "example": {
                 "prompt": "Create a Python fundamentals course for beginners.",
                 "languageConfig": {
                   "contentLanguage": "en",
                   "tutorLanguage": "en",
-                  "supportedLanguages": ["en"]
+                  "supportedLanguages": [
+                    "en"
+                  ]
                 }
               }
             }
@@ -458,22 +1098,43 @@
             "description": "Parsed course form data",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ParseDescriptionResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ParseDescriptionResponse"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         },
-        "security": [{ "bearerAuth": [] }, { "apiKeyHeader": [] }]
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyHeader": []
+          }
+        ]
       }
     },
     "/course-creation/curriculum-jobs": {
       "post": {
-        "tags": ["Course Creation"],
+        "tags": [
+          "Course Creation"
+        ],
         "summary": "Start curriculum generation",
         "description": "Starts an async curriculum generation job from instructions and source materials.",
         "operationId": "startCurriculumGeneration",
@@ -481,7 +1142,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CurriculumJobRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/CurriculumJobRequest"
+              },
               "example": {
                 "draftCourseId": "draft_abc123",
                 "instructions": {
@@ -496,7 +1159,9 @@
                 "enableResearch": true,
                 "languageConfig": {
                   "contentLanguage": "en",
-                  "supportedLanguages": ["en"]
+                  "supportedLanguages": [
+                    "en"
+                  ]
                 }
               }
             }
@@ -507,22 +1172,38 @@
             "description": "Curriculum generation job started",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CurriculumJobResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/CurriculumJobResponse"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "409": { "$ref": "#/components/responses/409" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/course-creation/curriculum-jobs/{jobId}": {
       "get": {
-        "tags": ["Course Creation"],
+        "tags": [
+          "Course Creation"
+        ],
         "summary": "Get curriculum generation status",
         "description": "Polls the status of an async curriculum generation job.",
         "operationId": "getCurriculumGenerationStatus",
@@ -531,7 +1212,9 @@
             "name": "jobId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "The curriculum generation job ID"
           }
         ],
@@ -540,21 +1223,35 @@
             "description": "Job status",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CurriculumJobStatusResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/CurriculumJobStatusResponse"
+                }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "404": { "$ref": "#/components/responses/404" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses": {
       "post": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Create course",
         "description": "Creates a full course with curriculum structure from generated data.",
         "operationId": "createCourse",
@@ -562,7 +1259,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateCourseRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateCourseRequest"
+              }
             }
           }
         },
@@ -574,25 +1273,46 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "course": { "type": "object" },
-                    "lessonIds": { "type": "array", "items": { "type": "string" } }
+                    "course": {
+                      "type": "object"
+                    },
+                    "lessonIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "409": { "$ref": "#/components/responses/409" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseId}": {
       "get": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Get course by ID",
         "description": "Retrieves full course payload including chapters and lessons.",
         "operationId": "getCourseById",
@@ -601,7 +1321,9 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "The course ID"
           }
         ],
@@ -610,21 +1332,97 @@
             "description": "Full course object",
             "content": {
               "application/json": {
-                "schema": { "type": "object" }
+                "schema": {
+                  "type": "object"
+                }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "404": { "$ref": "#/components/responses/404" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Update course metadata",
+        "description": "Updates course details such as title, description, language, and thumbnail. Only provided fields are updated.",
+        "operationId": "updateCourse",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The course ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated course object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseId}/jobs": {
       "get": {
-        "tags": ["Jobs"],
+        "tags": [
+          "Jobs"
+        ],
         "summary": "List course jobs",
         "description": "Lists background jobs for a course, optionally filtered by status.",
         "operationId": "listCourseJobs",
@@ -633,7 +1431,9 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "status",
@@ -641,7 +1441,13 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["QUEUED", "PROCESSING", "COMPLETED", "FAILED", "RETRYING"]
+              "enum": [
+                "QUEUED",
+                "PROCESSING",
+                "COMPLETED",
+                "FAILED",
+                "RETRYING"
+              ]
             },
             "description": "Filter by job status"
           }
@@ -653,21 +1459,33 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/CourseJob" }
+                  "items": {
+                    "$ref": "#/components/schemas/CourseJob"
+                  }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseId}/rag-status": {
       "get": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Get RAG processing status",
         "description": "Retrieves source-document processing status for a course.",
         "operationId": "getRagProcessingStatus",
@@ -676,7 +1494,9 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -684,20 +1504,32 @@
             "description": "Document processing status",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RagProcessingStatus" }
+                "schema": {
+                  "$ref": "#/components/schemas/RagProcessingStatus"
+                }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseId}/video-exports": {
       "get": {
-        "tags": ["Courses"],
+        "tags": [
+          "Courses"
+        ],
         "summary": "Get course video exports",
         "description": "Lists video exports for a course.",
         "operationId": "getCourseVideoExports",
@@ -706,7 +1538,9 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -714,21 +1548,142 @@
             "description": "List of video exports",
             "content": {
               "application/json": {
-                "schema": { "type": "array", "items": { "type": "object" } }
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "404": { "$ref": "#/components/responses/404" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/courses/{courseId}/pdf-exports": {
+      "post": {
+        "tags": [
+          "Exports"
+        ],
+        "summary": "Trigger course PDF export",
+        "description": "Kicks off a background job to export course lessons as PDF. Supports safe retries using `Idempotency-Key`.",
+        "operationId": "exportCoursePdfs",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The course ID"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PdfExportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Export job started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PdfExportResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Exports"
+        ],
+        "summary": "Get PDF export history",
+        "description": "Retrieves completed PDF export jobs with download links.",
+        "operationId": "getPdfExportHistory",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The course ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completed PDF exports list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PdfExportHistoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseSlug}/lessons/{lessonSlug}": {
       "get": {
-        "tags": ["Lessons"],
+        "tags": [
+          "Lessons"
+        ],
         "summary": "Get lesson by slug",
         "description": "Retrieves a lesson's content by course and lesson slugs.",
         "operationId": "getLessonBySlug",
@@ -737,13 +1692,17 @@
             "name": "courseSlug",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "lessonSlug",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -751,21 +1710,35 @@
             "description": "Lesson content and metadata",
             "content": {
               "application/json": {
-                "schema": { "type": "object" }
+                "schema": {
+                  "type": "object"
+                }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "404": { "$ref": "#/components/responses/404" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseId}/lessons/generate-all": {
       "post": {
-        "tags": ["Lessons"],
+        "tags": [
+          "Lessons"
+        ],
         "summary": "Batch generate lesson content",
         "description": "Starts an async background job that generates AI content for all specified lessons in a course.",
         "operationId": "batchGenerateLessonContent",
@@ -774,21 +1747,30 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/BatchLessonGenerationRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/BatchLessonGenerationRequest"
+              },
               "example": {
-                "lessonIds": ["lesson_1", "lesson_2"],
+                "lessonIds": [
+                  "lesson_1",
+                  "lesson_2"
+                ],
                 "customInstructions": "Use concise examples with practical code snippets.",
                 "languageConfig": {
                   "contentLanguage": "en",
                   "tutorLanguage": "en",
-                  "supportedLanguages": ["en"]
+                  "supportedLanguages": [
+                    "en"
+                  ]
                 }
               }
             }
@@ -799,22 +1781,38 @@
             "description": "Batch lesson generation job created",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/CourseJob" }
+                "schema": {
+                  "$ref": "#/components/schemas/CourseJob"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "409": { "$ref": "#/components/responses/409" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseId}/lessons/generate-slides": {
       "post": {
-        "tags": ["Lessons"],
+        "tags": [
+          "Lessons"
+        ],
         "summary": "Batch generate slides (nano-banana)",
         "description": "Generates illustrated slide presentations for multiple lessons using the nano-banana method. Requires a slide template.",
         "operationId": "batchGenerateSlides",
@@ -823,16 +1821,23 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/BatchSlidesGenerationRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/BatchSlidesGenerationRequest"
+              },
               "example": {
-                "lessonIds": ["lesson_1", "lesson_2"],
+                "lessonIds": [
+                  "lesson_1",
+                  "lesson_2"
+                ],
                 "options": {
                   "slideCount": 6,
                   "template": "whiteboard",
@@ -849,23 +1854,39 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "type": "object" }
+                  "items": {
+                    "type": "object"
+                  }
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "409": { "$ref": "#/components/responses/409" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/courses/{courseId}/lessons/generate-videos": {
       "post": {
-        "tags": ["Lessons"],
+        "tags": [
+          "Lessons"
+        ],
         "summary": "Batch generate video exports",
         "description": "Exports slides as MP4 video for multiple lessons. Requires lessons to have slidesStatus: READY.",
         "operationId": "batchGenerateVideos",
@@ -874,16 +1895,23 @@
             "name": "courseId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/BatchVideoGenerationRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/BatchVideoGenerationRequest"
+              },
               "example": {
-                "lessonIds": ["lesson_1", "lesson_2"]
+                "lessonIds": [
+                  "lesson_1",
+                  "lesson_2"
+                ]
               }
             }
           }
@@ -895,23 +1923,39 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "type": "object" }
+                  "items": {
+                    "type": "object"
+                  }
                 }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "409": { "$ref": "#/components/responses/409" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/lessons/{lessonId}/generate-content": {
       "post": {
-        "tags": ["Lessons"],
+        "tags": [
+          "Lessons"
+        ],
         "summary": "Generate lesson content (single)",
         "description": "Triggers AI content generation for a specific lesson.",
         "operationId": "generateLessonContent",
@@ -920,14 +1964,18 @@
             "name": "lessonId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/LessonGenerationRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/LessonGenerationRequest"
+              }
             }
           }
         },
@@ -936,22 +1984,38 @@
             "description": "Generation result",
             "content": {
               "application/json": {
-                "schema": { "type": "object" }
+                "schema": {
+                  "type": "object"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "409": { "$ref": "#/components/responses/409" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/lessons/{lessonId}/slides-narration": {
       "post": {
-        "tags": ["Lessons"],
+        "tags": [
+          "Lessons"
+        ],
         "summary": "Generate slides and narration (single)",
         "description": "Triggers slide deck and audio narration generation for a specific lesson.",
         "operationId": "generateSlidesNarration",
@@ -960,14 +2024,18 @@
             "name": "lessonId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/SlidesNarrationRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/SlidesNarrationRequest"
+              }
             }
           }
         },
@@ -976,22 +2044,38 @@
             "description": "Slides/video job identifiers and status",
             "content": {
               "application/json": {
-                "schema": { "type": "object" }
+                "schema": {
+                  "type": "object"
+                }
               }
             }
           },
-          "400": { "$ref": "#/components/responses/400" },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "409": { "$ref": "#/components/responses/409" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     },
     "/jobs/{jobId}": {
       "get": {
-        "tags": ["Jobs"],
+        "tags": [
+          "Jobs"
+        ],
         "summary": "Get job by ID",
         "description": "Retrieves a single background job by its ID.",
         "operationId": "getJobById",
@@ -1000,7 +2084,9 @@
             "name": "jobId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1008,15 +2094,205 @@
             "description": "Job details",
             "content": {
               "application/json": {
-                "schema": { "type": "object" }
+                "schema": {
+                  "type": "object"
+                }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/401" },
-          "403": { "$ref": "#/components/responses/403" },
-          "404": { "$ref": "#/components/responses/404" },
-          "429": { "$ref": "#/components/responses/429" },
-          "500": { "$ref": "#/components/responses/500" }
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/pdf-exports/jobs/{jobId}": {
+      "get": {
+        "tags": [
+          "Exports"
+        ],
+        "summary": "Poll PDF export job status",
+        "description": "Polls the status of an active course PDF export job.",
+        "operationId": "getPdfExportStatus",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The PDF export job ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active PDF export job status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PdfExportStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/rag-documents": {
+      "post": {
+        "tags": [
+          "RAG Documents"
+        ],
+        "summary": "Upload RAG document",
+        "description": "Uploads one source document as multipart/form-data, stores it, creates a RAG document record, and starts asynchronous processing. If neither courseId nor draftCourseId is supplied, a new draftCourseId is returned. Idempotency is scoped to upload metadata and file checksum.",
+        "operationId": "uploadRagDocument",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Source document, 100MB maximum"
+                  },
+                  "courseId": {
+                    "type": "string",
+                    "description": "Existing course ID to attach the document to",
+                    "maxLength": 255,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "draftCourseId": {
+                    "type": "string",
+                    "description": "Draft course ID to attach the document to before course creation",
+                    "maxLength": 255,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "description": "Human-readable file name",
+                    "maxLength": 255
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uploaded RAG document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RagDocumentUploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "413": {
+            "$ref": "#/components/responses/413"
+          },
+          "415": {
+            "$ref": "#/components/responses/415"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/course-creation/drafts/{draftCourseId}/rag-status": {
+      "get": {
+        "tags": [
+          "RAG Documents"
+        ],
+        "summary": "Get draft RAG processing status",
+        "description": "Retrieves source-document processing status for documents uploaded before a course exists.",
+        "operationId": "getDraftRagProcessingStatus",
+        "parameters": [
+          {
+            "name": "draftCourseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Draft document processing status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RagProcessingStatus"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
         }
       }
     }
