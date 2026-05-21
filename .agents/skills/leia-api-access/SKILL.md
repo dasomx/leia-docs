@@ -50,6 +50,168 @@ Use this sequence for creating a complete course via API:
 | 9 | Rare: `POST /courses/:courseId/lessons/generate-videos` | Re-export videos after manual slide edits (auto-generated otherwise) |
 | 10 | Optional: `POST /courses/:courseId/pdf-exports` | Export lessons as PDF |
 
+## PDF-based course creation (RAG upload flow)
+
+When you have source documents (PDFs, DOCX, TXT, etc.) and want the AI to generate a course from them, upload the documents first via the RAG pipeline. The uploaded content becomes reference material for curriculum generation and lesson content.
+
+### RAG upload flow
+
+**Every step must carry the same `draftCourseId`** for documents to end up associated with the final course. Missing the ID at any step breaks the chain.
+
+| Step | Endpoint | Key detail |
+|---|---|---|
+| R1 | `POST /rag-documents` | Upload document → returns `draftCourseId` (and `courseId: null` — expected, no course exists yet) |
+| R2 | `GET /course-creation/drafts/:draftCourseId/rag-status` | Poll until all documents `COMPLETED` |
+| R3 | `POST /course-creation/parse-description` | Pass `draftCourseId` so RAG docs inform course structure |
+| R4 | `POST /course-creation/curriculum-jobs` | Standard curriculum generation |
+| R5 | `POST /courses` | **⚠️ Pass `draftCourseId` here** — this is what creates the course with that ID and auto-links all draft documents to it |
+
+The `draftCourseId` becomes the `courseId`. On `POST /courses`, the server:
+1. Creates the course using the `draftCourseId` as the course ID
+2. Auto-claims all files, documents, and deep research with that `draftCourseId` — setting their `courseId` to the new course and clearing their `draftCourseId`
+
+### R1: Upload a source document
+
+```http
+POST /rag-documents
+Content-Type: multipart/form-data
+```
+
+This is a **multipart upload**, not JSON. Use `-F` flags in curl:
+
+```bash
+curl -s -X POST "$BASE_URL/rag-documents" \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Idempotency-Key: upload-source-001" \
+  -F "file=@source.pdf" \
+  -F "displayName=Course reference material"
+```
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `file` | file | **Yes** | Source document, 100MB max |
+| `displayName` | string | No | Human-readable file name |
+| `courseId` | string | No | Existing course ID to attach to |
+| `draftCourseId` | string | No | Draft ID; if neither `courseId` nor `draftCourseId` is provided, a new `draftCourseId` is returned |
+
+Supported types: PDF, DOC/DOCX, XLS/XLSX, TXT, Markdown, HTML, CSV, RTF, and other `text/*` files.
+
+**⚠️ Idempotency for RAG uploads:** Scoped to full upload metadata + file checksum. Reusing the same `Idempotency-Key` with different file content returns `409 IDEMPOTENCY_CONFLICT`.
+
+**Response:**
+
+```json
+{
+  "fileId": "file_...",
+  "documentId": "doc_...",
+  "fileName": "source.pdf",
+  "mimeType": "application/pdf",
+  "fileSize": 123456,
+  "publicUrl": "https://...",
+  "status": "PENDING",
+  "courseId": null,
+  "draftCourseId": "550e8400-..."
+}
+```
+
+**`courseId: null` is expected.** No course exists yet — the document is attached to a draft. It will be auto-linked when you create the course with this `draftCourseId` in step R5.
+
+**Critical:** Save and reuse the same `draftCourseId` through every subsequent step. This is the key that links everything together.
+
+### R2: Poll draft RAG processing status
+
+Documents are processed asynchronously. Wait until all documents complete before proceeding.
+
+```http
+GET /course-creation/drafts/:draftCourseId/rag-status
+```
+
+**Response:**
+
+```json
+{
+  "isProcessing": true,
+  "totalDocuments": 2,
+  "completedCount": 1,
+  "failedCount": 0,
+  "processingDocuments": [
+    { "id": "doc_...", "fileName": "source.pdf", "status": "PROCESSING" }
+  ]
+}
+```
+
+Wait until `isProcessing` is `false` and all documents are `COMPLETED`. If any document `FAILED`, check the document status before continuing.
+
+### R3: Parse with draftCourseId
+
+Pass the `draftCourseId` so uploaded documents inform the course structure:
+
+```json
+{
+  "prompt": "Create a course from the uploaded reference material...",
+  "draftCourseId": "550e8400-..."
+}
+```
+
+### R4: Generate curriculum
+
+Standard curriculum generation (no `draftCourseId` needed here — the parse already seeded the context):
+
+```http
+POST /course-creation/curriculum-jobs
+```
+
+### R5: Create course with draftCourseId (the critical link)
+
+```http
+POST /courses
+```
+
+**This is where documents get associated.** Pass the same `draftCourseId` — the server will:
+
+1. Create the course using that ID as the `courseId`
+2. Auto-claim all files and documents with that `draftCourseId`, linking them to the new course
+
+```json
+{
+  "title": "Course Title",
+  "description": "Course description",
+  "draftCourseId": "550e8400-...",
+  "curriculum": { "modules": [...] },
+  "languageConfig": { "contentLanguage": "en", "tutorLanguage": "en", "supportedLanguages": ["en"] }
+}
+```
+
+After this call, the course exists with `id === draftCourseId`, and all uploaded documents now have that `courseId`.
+
+### Course-level RAG status (verify association)
+
+After course creation, verify documents are linked:
+
+```http
+GET /courses/:courseId/rag-status
+```
+
+Same response shape as draft RAG status. Use this before triggering lesson generation — lessons benefit from fully processed reference documents.
+
+### Uploading multiple documents
+
+Upload each document separately. All uploads sharing the same `draftCourseId` (or returning the same auto-generated one) will be pooled together:
+
+```bash
+# First upload (auto-creates draftCourseId)
+RESP=$(curl -s -X POST "$BASE_URL/rag-documents" \
+  -H "Authorization: Bearer $API_KEY" \
+  -F "file=@chapter1.pdf")
+DRAFT_ID=$(echo "$RESP" | python3 -c "import sys,json; print(json.load(sys.stdin)['draftCourseId'])")
+
+# Subsequent uploads reuse the same draftCourseId
+curl -s -X POST "$BASE_URL/rag-documents" \
+  -H "Authorization: Bearer $API_KEY" \
+  -F "file=@chapter2.pdf" \
+  -F "draftCourseId=$DRAFT_ID"
+```
+
 ## Step 1: Parse description
 
 ```http
@@ -62,11 +224,15 @@ POST /course-creation/parse-description
 {
   "prompt": "Create a short course on TypeScript generics for intermediate developers. Cover generic functions, constraints, conditional types, and mapped types. Include practical code examples.",
   "sourceFileUrl": null,
-  "files": []
+  "pdfUrl": null,
+  "files": [],
+  "draftCourseId": null
 }
 ```
 
 `prompt` is a natural-language course description. Aim for 3-8 sentences covering topic, audience, key areas, and desired tone/length.
+
+If using uploaded RAG documents, pass the `draftCourseId` from the upload response. You may also pass `sourceFileUrl` or `pdfUrl` (HTTPS URLs only) directly to reference remote source material.
 
 ### Actual response shape
 
@@ -143,9 +309,13 @@ The backend validates all of these. Missing any returns `400 BAD_REQUEST`:
     "supportedLanguages": ["en"],
     "culturalContext": ""
   },
+  "sourceFileUrl": null,
   "enableResearch": false
 }
 ```
+
+- `sourceFileUrl` (optional, HTTPS only): Remote file URL to use as source material for curriculum generation. Mutually independent from RAG-uploaded documents — both can inform generation.
+- `enableResearch` (optional): Enable the deep research agent for richer curriculum context.
 
 **Critical rules for `instructions`:**
 
@@ -309,6 +479,7 @@ POST /courses
 {
   "title": "string (required)",
   "description": "string (recommended, use from parsed data metadata.description)",
+  "draftCourseId": "string (REQUIRED for RAG flow — pass the ID from your RAG upload. This becomes the course ID and auto-links all draft documents to the course.)",
   "curriculum": {
     "modules": [
       {
@@ -334,8 +505,7 @@ POST /courses
     "contentLanguage": "en",
     "tutorLanguage": "en",
     "supportedLanguages": ["en"]
-  },
-  "draftCourseId": null
+  }
 }
 ```
 
@@ -345,7 +515,7 @@ POST /courses
 |---|---|---|
 | `title` | **Yes** | Course title |
 | `description` | Recommended | Pull from `result.metadata.description` in the curriculum response, or craft one from the parsed data |
-| `curriculum.modules[].lessons[].id` | **Yes** | Lesson identifier |
+| **`draftCourseId`** | Required for RAG flow | **If you uploaded RAG documents, pass their `draftCourseId` here.** The course will be created with this ID, and all draft documents/files will be auto-linked. Without this, documents remain orphaned with `courseId: null`. |
 | `curriculum.modules[].lessons[].slug` | **Yes** | **Easily missed.** The curriculum job returns slugs — use them verbatim. If missing, derive from the lesson id (kebab-case the last segment). |
 | `curriculum.modules[].lessons[].type` | **Yes** | `LECTURE`, `QUIZ`, `PROJECT`, etc. |
 | `curriculum.modules[].lessons[].title` | **Yes** | Lesson title |
@@ -566,6 +736,7 @@ GET /courses/:courseId
 GET /jobs/:jobId
 GET /courses/:courseId/jobs
 GET /courses/:courseId/rag-status
+GET /course-creation/drafts/:draftCourseId/rag-status
 GET /courses/:courseId/video-exports
 GET /courses/:courseId/pdf-exports
 GET /pdf-exports/jobs/:jobId
@@ -635,11 +806,22 @@ Avoid dumping huge JSON unless the user asks. Use `python3 -m json.tool` for rea
 API_KEY="leia_sk_..."
 BASE_URL="http://localhost:3000/api/v1"
 
-# Step 1: Parse description
+# Step 1: Parse description (with optional RAG draftCourseId)
 curl -s -X POST "$BASE_URL/course-creation/parse-description" \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"prompt":"Create a short course on TypeScript generics for intermediate developers. Cover generic functions, constraints, conditional types, and mapped types with practical code examples."}'
+  -d '{"prompt":"Create a short course on TypeScript generics for intermediate developers. Cover generic functions, constraints, conditional types, and mapped types with practical code examples.","draftCourseId":null}'
+
+# Optional RAG upload flow:
+# Upload a source document
+curl -s -X POST "$BASE_URL/rag-documents" \
+  -H "Authorization: Bearer $API_KEY" \
+  -F "file=@source.pdf" \
+  -F "displayName=Reference material"
+
+# Poll draft RAG processing
+curl -s "$BASE_URL/course-creation/drafts/DRAFT_ID/rag-status" \
+  -H "Authorization: Bearer $API_KEY"
 
 # Step 2: Start curriculum (use parsed data to fill instructions)
 curl -s -X POST "$BASE_URL/course-creation/curriculum-jobs" \
@@ -667,12 +849,14 @@ curl -s "$BASE_URL/course-creation/curriculum-jobs/JOB_ID" \
   -H "Authorization: Bearer $API_KEY"
 
 # Step 4: Create course with curated curriculum
+# IMPORTANT: if using RAG flow, pass draftCourseId here
 curl -s -X POST "$BASE_URL/courses" \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Course Title",
     "description": "Course description from curriculum metadata",
+    "draftCourseId": null,
     "curriculum": { "modules": [...] },
     "languageConfig": { "contentLanguage": "en", "tutorLanguage": "en", "supportedLanguages": ["en"] }
   }'
