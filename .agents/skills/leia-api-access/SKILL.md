@@ -882,3 +882,5 @@ curl -s -X POST "$BASE_URL/courses/COURSE_ID/pdf-exports" \
 curl -s "$BASE_URL/pdf-exports/jobs/JOB_ID" \
   -H "Authorization: Bearer $API_KEY"
 ```
+
+**API Documentation**: For full request/response schemas, error codes, and field descriptions, refer to the OpenAPI spec at `https://docs.leia.to/llms.txt`.
