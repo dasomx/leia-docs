@@ -732,7 +732,7 @@ For non-reservation endpoints (like `parse-description`), credit enforcement is 
 ## Retrieval endpoints
 
 ```http
-GET /courses/:courseId
+GET /courses/:courseIdOrSlug
 GET /jobs/:jobId
 GET /courses/:courseId/jobs
 GET /courses/:courseId/rag-status
@@ -743,6 +743,20 @@ GET /pdf-exports/jobs/:jobId
 GET /courses/:courseSlug/lessons/:lessonSlug
 GET /openapi.json
 ```
+
+`GET /courses/:courseIdOrSlug` accepts either the LEIA course ID or the dashboard slug. Use this to resolve a course ID from a dashboard URL before listing jobs or issuing mutations that require a course ID.
+
+## Management endpoints
+
+Use these for cleanup and job control. They are mutating `POST` endpoints, so include an `Idempotency-Key` when retrying.
+
+```http
+POST /courses/:courseId/delete
+POST /jobs/:jobId/cancel
+```
+
+- `POST /courses/:courseId/delete` deletes a course by LEIA course ID and returns the underlying `course.delete` result.
+- `POST /jobs/:jobId/cancel` cancels jobs in `QUEUED`, `PROCESSING`, or `RETRYING` state and returns the underlying `job.cancel` result.
 
 ## Common errors and fixes
 
@@ -871,6 +885,16 @@ curl -s -X POST "$BASE_URL/courses/COURSE_ID/lessons/generate-all" \
 curl -s "$BASE_URL/jobs/JOB_ID" \
   -H "Authorization: Bearer $API_KEY"
 
+# Cancel a queued/processing/retrying job
+curl -s -X POST "$BASE_URL/jobs/JOB_ID/cancel" \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Idempotency-Key: cancel-job-JOB_ID"
+
+# Delete a course
+curl -s -X POST "$BASE_URL/courses/COURSE_ID/delete" \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Idempotency-Key: delete-course-COURSE_ID"
+
 # Step 7 (optional): Export PDFs
 curl -s -X POST "$BASE_URL/courses/COURSE_ID/pdf-exports" \
   -H "Authorization: Bearer $API_KEY" \
@@ -883,4 +907,4 @@ curl -s "$BASE_URL/pdf-exports/jobs/JOB_ID" \
   -H "Authorization: Bearer $API_KEY"
 ```
 
-**API Documentation**: For full request/response schemas, error codes, and field descriptions, refer to the OpenAPI spec at `https://docs.leia.to/llms.txt`.
+**API Documentation**: For full request/response schemas, error codes, and field descriptions, refer to the full API documentation at `https://docs.leia.to/llms.txt`.

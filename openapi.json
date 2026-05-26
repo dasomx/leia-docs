@@ -955,16 +955,30 @@
         }
       },
       "403": {
-        "description": "Forbidden — valid key but insufficient permissions",
+        "description": "Forbidden — valid key but insufficient permissions or insufficient organization credits to perform the operation",
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Error"
             },
-            "example": {
-              "error": {
-                "code": "FORBIDDEN",
-                "message": "API key service user must be a CREATOR user"
+            "examples": {
+              "insufficientPermissions": {
+                "summary": "Insufficient permissions",
+                "value": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "API key service user must be a CREATOR user"
+                  }
+                }
+              },
+              "insufficientCredits": {
+                "summary": "Insufficient credits",
+                "value": {
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "message": "Insufficient credits. Please upgrade your plan, wait for your next credit reset, or buy a one-time credit pack to continue. You can also buy a one-time credit pack from Dashboard -> Subscription -> Buy credits. One-time credits are added to your workspace wallet and can be used immediately."
+                  }
+                }
               }
             }
           }
@@ -1313,8 +1327,8 @@
         "tags": [
           "Courses"
         ],
-        "summary": "Get course by ID",
-        "description": "Retrieves full course payload including chapters and lessons.",
+        "summary": "Get course by ID or slug",
+        "description": "Retrieves full course payload including chapters and lessons by course ID or slug.",
         "operationId": "getCourseById",
         "parameters": [
           {
@@ -1324,7 +1338,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "The course ID"
+            "description": "The course ID or slug"
           }
         ],
         "responses": {
@@ -1386,6 +1400,60 @@
         "responses": {
           "200": {
             "description": "Updated course object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/courses/{courseId}/delete": {
+      "post": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Delete course",
+        "description": "Deletes a course by its ID.",
+        "operationId": "deleteCourse",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The course ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted course object",
             "content": {
               "application/json": {
                 "schema": {
@@ -2108,6 +2176,59 @@
           },
           "404": {
             "$ref": "#/components/responses/404"
+          },
+          "429": {
+            "$ref": "#/components/responses/429"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/jobs/{jobId}/cancel": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Cancel job",
+        "description": "Cancels a queued, processing, or retrying background job by its ID.",
+        "operationId": "cancelJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancelled job response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
           },
           "429": {
             "$ref": "#/components/responses/429"
