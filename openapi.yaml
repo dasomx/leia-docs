@@ -1,23 +1,22 @@
 openapi: 3.0.3
 info:
   title: LEIA Partner API v1
-  description: >-
-    REST API for programmatic course creation. All endpoints are server-to-server only — authenticated via LEIA API
-    keys.
+  description: REST API for programmatic course creation. All endpoints are server-to-server only — authenticated
+    via LEIA API keys.
   version: 1.0.0
   contact:
     name: LEIA API Support
     email: api@leia.io
 servers:
-  - url: https://api.leia.io/api/v1
-    description: Production
-  - url: https://staging-api.leia.io/api/v1
-    description: Staging
-  - url: http://localhost:3000/api/v1
-    description: Local development
+- url: https://api.leia.to/api/v1
+  description: Production
+- url: https://staging-api.leia.io/api/v1
+  description: Staging
+- url: http://localhost:3000/api/v1
+  description: Local development
 security:
-  - bearerAuth: []
-  - apiKeyHeader: []
+- bearerAuth: []
+- apiKeyHeader: []
 components:
   securitySchemes:
     bearerAuth:
@@ -47,22 +46,84 @@ components:
             type: string
           description: Additional languages supported in the course
           example:
-            - ko
-            - en
+          - ko
+          - en
         culturalContext:
           type: string
           description: Cultural framing for examples and scenarios
           example: Korean workplace training
+    CourseUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: The title of the course
+          example: Ontology Engineering and AI Knowledge Systems
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 255
+          pattern: ^[a-z0-9-]+$
+          description: A unique, URL-friendly slug containing only lowercase alphanumeric characters and
+            hyphens
+          example: ontology-engineering-ai-knowledge-systems
+        description:
+          type: string
+          maxLength: 5000
+          nullable: true
+          description: A detailed description of the course content and learning goals
+          example: Learn practical ontology design, semantic web standards, and knowledge graph engineering.
+        contentLanguage:
+          type: string
+          minLength: 2
+          maxLength: 10
+          description: Primary language for generated course content (ISO 639-1)
+          example: en
+        tutorLanguage:
+          type: string
+          minLength: 2
+          maxLength: 10
+          nullable: true
+          description: Language for AI tutor interactions (ISO 639-1)
+          example: en
+        supportedLanguages:
+          type: array
+          items:
+            type: string
+            minLength: 2
+            maxLength: 10
+          description: Additional languages supported in the course
+          example:
+          - en
+          - ko
+        culturalContext:
+          type: string
+          maxLength: 1000
+          nullable: true
+          description: Cultural framing and localized examples
+          example: Corporate professional training
+        isPrivate:
+          type: boolean
+          description: Whether the course is private to enrolled members only
+          example: true
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+          description: An HTTPS URL to a thumbnail image for the course
+          example: https://example.com/course-thumbnail.png
     Error:
       type: object
       required:
-        - error
+      - error
       properties:
         error:
           type: object
           required:
-            - code
-            - message
+          - code
+          - message
           properties:
             code:
               type: string
@@ -91,7 +152,7 @@ components:
           items:
             type: object
             required:
-              - url
+            - url
             properties:
               url:
                 type: string
@@ -157,19 +218,19 @@ components:
     CurriculumJobRequest:
       type: object
       required:
-        - instructions
+      - instructions
       properties:
         draftCourseId:
           type: string
         instructions:
           type: object
           required:
-            - courseTitle
-            - difficulty
-            - tone
-            - includeExercises
-            - includeQuizzes
-            - includeProjects
+          - courseTitle
+          - difficulty
+          - tone
+          - includeExercises
+          - includeQuizzes
+          - includeProjects
           properties:
             courseTitle:
               type: string
@@ -180,15 +241,15 @@ components:
             difficulty:
               type: string
               enum:
-                - beginner
-                - intermediate
-                - advanced
+              - beginner
+              - intermediate
+              - advanced
             tone:
               type: string
               enum:
-                - formal
-                - casual
-                - conversational
+              - formal
+              - casual
+              - conversational
             includeExercises:
               type: boolean
             includeQuizzes:
@@ -226,10 +287,10 @@ components:
         status:
           type: string
           enum:
-            - QUEUED
-            - PROCESSING
-            - COMPLETED
-            - FAILED
+          - QUEUED
+          - PROCESSING
+          - COMPLETED
+          - FAILED
         phase:
           type: string
         progress:
@@ -251,8 +312,8 @@ components:
     CreateCourseRequest:
       type: object
       required:
-        - title
-        - curriculum
+      - title
+      - curriculum
       properties:
         title:
           type: string
@@ -267,15 +328,15 @@ components:
         curriculum:
           type: object
           required:
-            - modules
+          - modules
           properties:
             modules:
               type: array
               items:
                 type: object
                 required:
-                  - title
-                  - lessons
+                - title
+                - lessons
                 properties:
                   title:
                     type: string
@@ -286,8 +347,8 @@ components:
                     items:
                       type: object
                       required:
-                        - title
-                        - slug
+                      - title
+                      - slug
                       properties:
                         title:
                           type: string
@@ -298,29 +359,29 @@ components:
                         type:
                           type: string
                           enum:
-                            - LECTURE
-                            - QUIZ
-                            - GRADED_QUIZ
-                            - PROJECT
-                            - ASSIGNMENT
-                            - PODCAST
-                            - DISCUSSION
-                            - READING
-                            - LAB
-                            - WORKSHOP
+                          - LECTURE
+                          - QUIZ
+                          - GRADED_QUIZ
+                          - PROJECT
+                          - ASSIGNMENT
+                          - PODCAST
+                          - DISCUSSION
+                          - READING
+                          - LAB
+                          - WORKSHOP
                         lessonLength:
                           type: string
                           enum:
-                            - SHORT
-                            - MEDIUM
-                            - LONG
+                          - SHORT
+                          - MEDIUM
+                          - LONG
                         contentLevel:
                           type: string
                           enum:
-                            - ELEMENTARY
-                            - MIDDLE
-                            - COLLEGE
-                            - PROFESSIONAL
+                          - ELEMENTARY
+                          - MIDDLE
+                          - COLLEGE
+                          - PROFESSIONAL
                         learningOutcomes:
                           type: array
                           items:
@@ -358,16 +419,28 @@ components:
               example: en
             voice:
               type: string
-              example: alloy
+              example: Aoede
+              description: Value returned by GET /narration-voices; overrides the course narration profile
             template:
               type: string
-              description: Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate')
+              description: Active illustrated key returned by GET /slide-templates?method=ILLUSTRATED;
+                required for nano-banana
+            htmlTemplate:
+              type: string
+              description: Active HTML key returned by GET /slide-templates?method=HTML
         languageConfig:
           $ref: '#/components/schemas/LanguageConfig'
+        method:
+          type: string
+          enum:
+          - nano-banana
+          - gemini-html
+          - claude-pptx
+          default: gemini-html
     BatchLessonGenerationRequest:
       type: object
       required:
-        - lessonIds
+      - lessonIds
       properties:
         lessonIds:
           type: array
@@ -381,7 +454,7 @@ components:
     BatchSlidesGenerationRequest:
       type: object
       required:
-        - lessonIds
+      - lessonIds
       properties:
         lessonIds:
           type: array
@@ -401,15 +474,28 @@ components:
               example: en
             template:
               type: string
-              description: >-
-                Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate', 'doodle-notebook',
-                'handwrittenchalkcasual')
+              description: Active illustrated key returned by GET /slide-templates?method=ILLUSTRATED;
+                required for nano-banana
+            voice:
+              type: string
+              example: Aoede
+              description: Value returned by GET /narration-voices; overrides the course narration profile
+            htmlTemplate:
+              type: string
+              description: Active HTML key returned by GET /slide-templates?method=HTML
         languageConfig:
           $ref: '#/components/schemas/LanguageConfig'
+        method:
+          type: string
+          enum:
+          - nano-banana
+          - gemini-html
+          - claude-pptx
+          default: nano-banana
     BatchVideoGenerationRequest:
       type: object
       required:
-        - lessonIds
+      - lessonIds
       properties:
         lessonIds:
           type: array
@@ -424,20 +510,20 @@ components:
         type:
           type: string
           enum:
-            - LESSON_GENERATION
-            - SLIDES_GENERATION
-            - VIDEO_EXPORT
-            - PDF_PROCESSING
-            - PODCAST_GENERATION
-            - ASSIGNMENT_GENERATION
+          - LESSON_GENERATION
+          - SLIDES_GENERATION
+          - VIDEO_EXPORT
+          - PDF_PROCESSING
+          - PODCAST_GENERATION
+          - ASSIGNMENT_GENERATION
         status:
           type: string
           enum:
-            - QUEUED
-            - PROCESSING
-            - COMPLETED
-            - FAILED
-            - RETRYING
+          - QUEUED
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          - RETRYING
         progress:
           type: integer
         errorReason:
@@ -471,6 +557,136 @@ components:
                 type: string
               status:
                 type: string
+    PdfExportRequest:
+      type: object
+      properties:
+        lessonIds:
+          type: array
+          items:
+            type: string
+          description: List of specific lesson IDs to export. If empty or omitted, exports all valid lecture
+            lessons in the course.
+    PdfExportResponse:
+      type: object
+      properties:
+        jobId:
+          type: string
+          description: The background job ID of the PDF export process.
+    PdfExportStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - QUEUED
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        result:
+          type: object
+          nullable: true
+          properties:
+            downloadUrl:
+              type: string
+              format: uri
+            lessonCount:
+              type: integer
+            downloadFileName:
+              type: string
+            downloadKind:
+              type: string
+              enum:
+              - pdf
+              - zip
+            error:
+              type: string
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+    PdfExportHistoryResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          status:
+            type: string
+            enum:
+            - COMPLETED
+          lessonIds:
+            type: array
+            items:
+              type: string
+          result:
+            type: object
+            nullable: true
+            properties:
+              downloadUrl:
+                type: string
+                format: uri
+              lessonCount:
+                type: integer
+              downloadFileName:
+                type: string
+              downloadKind:
+                type: string
+                enum:
+                - pdf
+                - zip
+          createdAt:
+            type: string
+            format: date-time
+          completedAt:
+            type: string
+            format: date-time
+    RagDocumentUploadResponse:
+      type: object
+      required:
+      - fileId
+      - documentId
+      - fileName
+      - mimeType
+      - fileSize
+      - publicUrl
+      - status
+      properties:
+        fileId:
+          type: string
+        documentId:
+          type: string
+        fileName:
+          type: string
+        mimeType:
+          type: string
+        fileSize:
+          type: integer
+        publicUrl:
+          type: string
+          format: uri
+        status:
+          type: string
+          enum:
+          - PENDING
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+        courseId:
+          type: string
+          nullable: true
+        draftCourseId:
+          type: string
+          nullable: true
   headers:
     IdempotencyKey:
       schema:
@@ -489,15 +705,28 @@ components:
               code: UNAUTHORIZED
               message: Valid LEIA API key required
     '403':
-      description: Forbidden — valid key but insufficient permissions
+      description: Forbidden — valid key but insufficient permissions or insufficient organization credits
+        to perform the operation
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-          example:
-            error:
-              code: FORBIDDEN
-              message: API key service user must be a CREATOR user
+          examples:
+            insufficientPermissions:
+              summary: Insufficient permissions
+              value:
+                error:
+                  code: FORBIDDEN
+                  message: API key service user must be a CREATOR user
+            insufficientCredits:
+              summary: Insufficient credits
+              value:
+                error:
+                  code: FORBIDDEN
+                  message: Insufficient credits. Please upgrade your plan, wait for your next credit reset,
+                    or buy a one-time credit pack to continue. You can also buy a one-time credit pack
+                    from Dashboard -> Subscription -> Buy credits. One-time credits are added to your
+                    workspace wallet and can be used immediately.
     '404':
       description: Not found
       content:
@@ -514,6 +743,18 @@ components:
             error:
               code: IDEMPOTENCY_CONFLICT
               message: Idempotency-Key was reused with a different request body
+    '413':
+      description: Payload too large
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '415':
+      description: Unsupported media type
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     '429':
       description: Rate limit exceeded
       content:
@@ -527,21 +768,26 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 tags:
-  - name: Course Creation
-    description: Parse descriptions and generate curriculum
-  - name: Courses
-    description: Create and retrieve courses
-  - name: Lessons
-    description: Generate lesson content, slides, and video
-  - name: Jobs
-    description: Track background job status
+- name: Course Creation
+  description: Parse descriptions and generate curriculum
+- name: Courses
+  description: Create and retrieve courses
+- name: Lessons
+  description: Generate lesson content, slides, and video
+- name: Jobs
+  description: Track background job status
+- name: Exports
+  description: Export course content as PDFs, video, or files
+- name: RAG Documents
+  description: Upload and monitor source documents for RAG processing
 paths:
   /course-creation/parse-description:
     post:
       tags:
-        - Course Creation
+      - Course Creation
       summary: Parse course description
-      description: Parses a natural-language course description and/or remote source files into structured course form data.
+      description: Parses a natural-language course description and/or remote source files into structured
+        course form data.
       operationId: parseCourseDescription
       requestBody:
         required: true
@@ -555,7 +801,7 @@ paths:
                 contentLanguage: en
                 tutorLanguage: en
                 supportedLanguages:
-                  - en
+                - en
       responses:
         '200':
           description: Parsed course form data
@@ -574,12 +820,12 @@ paths:
         '500':
           $ref: '#/components/responses/500'
       security:
-        - bearerAuth: []
-        - apiKeyHeader: []
+      - bearerAuth: []
+      - apiKeyHeader: []
   /course-creation/curriculum-jobs:
     post:
       tags:
-        - Course Creation
+      - Course Creation
       summary: Start curriculum generation
       description: Starts an async curriculum generation job from instructions and source materials.
       operationId: startCurriculumGeneration
@@ -603,7 +849,7 @@ paths:
               languageConfig:
                 contentLanguage: en
                 supportedLanguages:
-                  - en
+                - en
       responses:
         '200':
           description: Curriculum generation job started
@@ -626,17 +872,17 @@ paths:
   /course-creation/curriculum-jobs/{jobId}:
     get:
       tags:
-        - Course Creation
+      - Course Creation
       summary: Get curriculum generation status
       description: Polls the status of an async curriculum generation job.
       operationId: getCurriculumGenerationStatus
       parameters:
-        - name: jobId
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The curriculum generation job ID
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The curriculum generation job ID
       responses:
         '200':
           description: Job status
@@ -657,7 +903,7 @@ paths:
   /courses:
     post:
       tags:
-        - Courses
+      - Courses
       summary: Create course
       description: Creates a full course with curriculum structure from generated data.
       operationId: createCourse
@@ -696,17 +942,17 @@ paths:
   /courses/{courseId}:
     get:
       tags:
-        - Courses
-      summary: Get course by ID
-      description: Retrieves full course payload including chapters and lessons.
+      - Courses
+      summary: Get course by ID or slug
+      description: Retrieves full course payload including chapters and lessons by course ID or slug.
       operationId: getCourseById
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The course ID
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The course ID or slug
       responses:
         '200':
           description: Full course object
@@ -724,31 +970,107 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+    patch:
+      tags:
+      - Courses
+      summary: Update course metadata
+      description: Updates course details such as title, description, language, and thumbnail. Only provided
+        fields are updated.
+      operationId: updateCourse
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The course ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseUpdateRequest'
+      responses:
+        '200':
+          description: Updated course object
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /courses/{courseId}/delete:
+    post:
+      tags:
+      - Courses
+      summary: Delete course
+      description: Deletes a course by its ID.
+      operationId: deleteCourse
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The course ID
+      responses:
+        '200':
+          description: Deleted course object
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /courses/{courseId}/jobs:
     get:
       tags:
-        - Jobs
+      - Jobs
       summary: List course jobs
       description: Lists background jobs for a course, optionally filtered by status.
       operationId: listCourseJobs
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: status
-          in: query
-          required: false
-          schema:
-            type: string
-            enum:
-              - QUEUED
-              - PROCESSING
-              - COMPLETED
-              - FAILED
-              - RETRYING
-          description: Filter by job status
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - QUEUED
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          - RETRYING
+        description: Filter by job status
       responses:
         '200':
           description: List of jobs
@@ -769,16 +1091,16 @@ paths:
   /courses/{courseId}/rag-status:
     get:
       tags:
-        - Courses
+      - Courses
       summary: Get RAG processing status
       description: Retrieves source-document processing status for a course.
       operationId: getRagProcessingStatus
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Document processing status
@@ -797,16 +1119,16 @@ paths:
   /courses/{courseId}/video-exports:
     get:
       tags:
-        - Courses
+      - Courses
       summary: Get course video exports
       description: Lists video exports for a course.
       operationId: getCourseVideoExports
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: List of video exports
@@ -826,24 +1148,92 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /courses/{courseId}/pdf-exports:
+    post:
+      tags:
+      - Exports
+      summary: Trigger course PDF export
+      description: Kicks off a background job to export course lessons as PDF. Supports safe retries using
+        `Idempotency-Key`.
+      operationId: exportCoursePdfs
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The course ID
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PdfExportRequest'
+      responses:
+        '200':
+          description: Export job started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PdfExportResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '409':
+          $ref: '#/components/responses/409'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      tags:
+      - Exports
+      summary: Get PDF export history
+      description: Retrieves completed PDF export jobs with download links.
+      operationId: getPdfExportHistory
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The course ID
+      responses:
+        '200':
+          description: Completed PDF exports list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PdfExportHistoryResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /courses/{courseSlug}/lessons/{lessonSlug}:
     get:
       tags:
-        - Lessons
+      - Lessons
       summary: Get lesson by slug
       description: Retrieves a lesson's content by course and lesson slugs.
       operationId: getLessonBySlug
       parameters:
-        - name: courseSlug
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: lessonSlug
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: courseSlug
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: lessonSlug
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Lesson content and metadata
@@ -864,16 +1254,17 @@ paths:
   /courses/{courseId}/lessons/generate-all:
     post:
       tags:
-        - Lessons
+      - Lessons
       summary: Batch generate lesson content
-      description: Starts an async background job that generates AI content for all specified lessons in a course.
+      description: Starts an async background job that generates AI content for all specified lessons
+        in a course.
       operationId: batchGenerateLessonContent
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
       requestBody:
         required: true
         content:
@@ -882,14 +1273,14 @@ paths:
               $ref: '#/components/schemas/BatchLessonGenerationRequest'
             example:
               lessonIds:
-                - lesson_1
-                - lesson_2
+              - lesson_1
+              - lesson_2
               customInstructions: Use concise examples with practical code snippets.
               languageConfig:
                 contentLanguage: en
                 tutorLanguage: en
                 supportedLanguages:
-                  - en
+                - en
       responses:
         '200':
           description: Batch lesson generation job created
@@ -912,18 +1303,17 @@ paths:
   /courses/{courseId}/lessons/generate-slides:
     post:
       tags:
-        - Lessons
+      - Lessons
       summary: Batch generate slides (nano-banana)
-      description: >-
-        Generates illustrated slide presentations for multiple lessons using the nano-banana method. Requires a slide
-        template.
+      description: Generates illustrated slide presentations for multiple lessons using the nano-banana
+        method. Requires a slide template.
       operationId: batchGenerateSlides
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
       requestBody:
         required: true
         content:
@@ -932,11 +1322,11 @@ paths:
               $ref: '#/components/schemas/BatchSlidesGenerationRequest'
             example:
               lessonIds:
-                - lesson_1
-                - lesson_2
+              - lesson_1
+              - lesson_2
               options:
                 slideCount: 6
-                template: whiteboard
+                template: <active-template-key>
                 language: en
       responses:
         '200':
@@ -962,16 +1352,17 @@ paths:
   /courses/{courseId}/lessons/generate-videos:
     post:
       tags:
-        - Lessons
+      - Lessons
       summary: Batch generate video exports
-      description: 'Exports slides as MP4 video for multiple lessons. Requires lessons to have slidesStatus: READY.'
+      description: 'Exports slides as MP4 video for multiple lessons. Requires lessons to have slidesStatus:
+        READY.'
       operationId: batchGenerateVideos
       parameters:
-        - name: courseId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
       requestBody:
         required: true
         content:
@@ -980,8 +1371,8 @@ paths:
               $ref: '#/components/schemas/BatchVideoGenerationRequest'
             example:
               lessonIds:
-                - lesson_1
-                - lesson_2
+              - lesson_1
+              - lesson_2
       responses:
         '200':
           description: Array of video export job objects, one per lesson
@@ -1006,16 +1397,16 @@ paths:
   /lessons/{lessonId}/generate-content:
     post:
       tags:
-        - Lessons
+      - Lessons
       summary: Generate lesson content (single)
       description: Triggers AI content generation for a specific lesson.
       operationId: generateLessonContent
       parameters:
-        - name: lessonId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: lessonId
+        in: path
+        required: true
+        schema:
+          type: string
       requestBody:
         required: true
         content:
@@ -1044,16 +1435,16 @@ paths:
   /lessons/{lessonId}/slides-narration:
     post:
       tags:
-        - Lessons
+      - Lessons
       summary: Generate slides and narration (single)
       description: Triggers slide deck and audio narration generation for a specific lesson.
       operationId: generateSlidesNarration
       parameters:
-        - name: lessonId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: lessonId
+        in: path
+        required: true
+        schema:
+          type: string
       requestBody:
         required: true
         content:
@@ -1082,16 +1473,16 @@ paths:
   /jobs/{jobId}:
     get:
       tags:
-        - Jobs
+      - Jobs
       summary: Get job by ID
       description: Retrieves a single background job by its ID.
       operationId: getJobById
       parameters:
-        - name: jobId
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Job details
@@ -1109,3 +1500,595 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /jobs/{jobId}/cancel:
+    post:
+      tags:
+      - Jobs
+      summary: Cancel job
+      description: Cancels a queued, processing, or retrying background job by its ID.
+      operationId: cancelJob
+      parameters:
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Cancelled job response
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /pdf-exports/jobs/{jobId}:
+    get:
+      tags:
+      - Exports
+      summary: Poll PDF export job status
+      description: Polls the status of an active course PDF export job.
+      operationId: getPdfExportStatus
+      parameters:
+      - name: jobId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The PDF export job ID
+      responses:
+        '200':
+          description: Active PDF export job status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PdfExportStatusResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /rag-documents:
+    post:
+      tags:
+      - RAG Documents
+      summary: Upload RAG document
+      description: Uploads one source document as multipart/form-data, stores it, creates a RAG document
+        record, and starts asynchronous processing. If neither courseId nor draftCourseId is supplied,
+        a new draftCourseId is returned. Idempotency is scoped to upload metadata and file checksum.
+      operationId: uploadRagDocument
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Source document, 100MB maximum
+                courseId:
+                  type: string
+                  description: Existing course ID to attach the document to
+                  maxLength: 255
+                  pattern: ^[A-Za-z0-9_-]+$
+                draftCourseId:
+                  type: string
+                  description: Draft course ID to attach the document to before course creation
+                  maxLength: 255
+                  pattern: ^[A-Za-z0-9_-]+$
+                displayName:
+                  type: string
+                  description: Human-readable file name
+                  maxLength: 255
+      responses:
+        '200':
+          description: Uploaded RAG document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RagDocumentUploadResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '413':
+          $ref: '#/components/responses/413'
+        '415':
+          $ref: '#/components/responses/415'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /course-creation/drafts/{draftCourseId}/rag-status:
+    get:
+      tags:
+      - RAG Documents
+      summary: Get draft RAG processing status
+      description: Retrieves source-document processing status for documents uploaded before a course
+        exists.
+      operationId: getDraftRagProcessingStatus
+      parameters:
+      - name: draftCourseId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Draft document processing status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RagProcessingStatus'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /slide-templates:
+    get:
+      summary: List active organization slide templates (public metadata only)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - key
+                  - name
+                  - templateMethod
+                  properties:
+                    key:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                      nullable: true
+                    previewImageUrl:
+                      type: string
+                      nullable: true
+                    templateMethod:
+                      type: string
+                      enum:
+                      - ILLUSTRATED
+                      - HTML
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid API key
+        '403':
+          description: Access or feature denied
+        '404':
+          description: Resource not found in organization or course
+        '429':
+          description: RATE_LIMITED; per-key allowance exhausted
+      parameters:
+      - name: method
+        in: query
+        schema:
+          type: string
+          enum:
+          - ILLUSTRATED
+          - HTML
+          default: ILLUSTRATED
+      operationId: listSlideTemplates
+  /narration-voices:
+    get:
+      summary: List Gemini narration voices and default Aoede; select via options.voice
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - provider
+                - defaultVoice
+                - voices
+                properties:
+                  provider:
+                    type: string
+                    enum:
+                    - gemini
+                  defaultVoice:
+                    type: string
+                    example: Aoede
+                  voices:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - value
+                      - characteristic
+                      properties:
+                        value:
+                          type: string
+                          example: Kore
+                        characteristic:
+                          type: string
+                          example: Firm
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid API key
+        '403':
+          description: Access or feature denied
+        '404':
+          description: Resource not found in organization or course
+        '429':
+          description: RATE_LIMITED; per-key allowance exhausted
+      operationId: listNarrationVoices
+  /courses/{courseId}/design-blueprint/generate:
+    post:
+      summary: Generate a design blueprint from an active HTML template without saving
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - blueprint
+                properties:
+                  blueprint:
+                    type: string
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid API key
+        '403':
+          description: Access or feature denied
+        '404':
+          description: Resource not found in organization or course
+        '429':
+          description: RATE_LIMITED; per-key allowance exhausted
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+        description: Optional key for safely retrying this mutation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inspiredFromTemplateKey:
+                  type: string
+              required:
+              - inspiredFromTemplateKey
+      operationId: generateCourseDesignBlueprint
+  /courses/{courseId}/design-blueprint:
+    put:
+      summary: Save or clear a course design blueprint
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - success
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid API key
+        '403':
+          description: Access or feature denied
+        '404':
+          description: Resource not found in organization or course
+        '429':
+          description: RATE_LIMITED; per-key allowance exhausted
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+        description: Optional key for safely retrying this mutation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                blueprint:
+                  type: string
+                  maxLength: 10000
+                  nullable: true
+              required:
+              - blueprint
+      operationId: saveCourseDesignBlueprint
+  /learning-bits/illustration-styles:
+    get:
+      summary: List available Learning Bits illustration styles; feature must be enabled
+      responses:
+        '200':
+          description: Available styles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - key
+                  - name
+                  properties:
+                    key:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                      nullable: true
+                    previewImageUrl:
+                      type: string
+                      nullable: true
+        '403':
+          description: Feature not enabled
+      operationId: listLearningBitIllustrationStyles
+  /courses/{courseId}/learning-bits:
+    get:
+      summary: List course Learning Bit sets (feature must be enabled)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Learning Bit set; additional fields preserve the internal procedure response.
+                    List results include lesson, zipFile and media file relations.
+                  required:
+                  - id
+                  - courseId
+                  - lessonId
+                  - status
+                  - bits
+                  properties:
+                    id:
+                      type: string
+                    courseId:
+                      type: string
+                    lessonId:
+                      type: string
+                    status:
+                      type: string
+                    renderJobId:
+                      type: string
+                      nullable: true
+                    bits:
+                      type: array
+                      items:
+                        type: object
+                        required:
+                        - id
+                        - title
+                        - script
+                        - status
+                        properties:
+                          id:
+                            type: string
+                          title:
+                            type: string
+                          script:
+                            type: string
+                          status:
+                            type: string
+                          order:
+                            type: integer
+                        additionalProperties: true
+                  additionalProperties: true
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid API key
+        '403':
+          description: Access or feature denied
+        '404':
+          description: Resource not found in organization or course
+        '429':
+          description: RATE_LIMITED; per-key allowance exhausted
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+      operationId: listCourseLearningBits
+    post:
+      summary: Create a Learning Bit draft set from an existing course lesson
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Learning Bit set; additional fields preserve the internal procedure response.
+                  List results include lesson, zipFile and media file relations.
+                required:
+                - id
+                - courseId
+                - lessonId
+                - status
+                - bits
+                properties:
+                  id:
+                    type: string
+                  courseId:
+                    type: string
+                  lessonId:
+                    type: string
+                  status:
+                    type: string
+                  renderJobId:
+                    type: string
+                    nullable: true
+                  bits:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - title
+                      - script
+                      - status
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        script:
+                          type: string
+                        status:
+                          type: string
+                        order:
+                          type: integer
+                      additionalProperties: true
+                additionalProperties: true
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid API key
+        '403':
+          description: Access or feature denied
+        '404':
+          description: Resource not found in organization or course
+        '429':
+          description: RATE_LIMITED; per-key allowance exhausted
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+        description: Optional key for safely retrying this mutation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lessonId:
+                  type: string
+                requestedCount:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                illustrationStyleKey:
+                  type: string
+              required:
+              - lessonId
+      operationId: generateLearningBitDraftSet
+  /courses/{courseId}/learning-bits/{setId}/render:
+    post:
+      summary: Render a Learning Bit set in this course (feature must be enabled)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - setId
+                - jobId
+                - estimatedCredits
+                properties:
+                  setId:
+                    type: string
+                  jobId:
+                    type: string
+                  estimatedCredits:
+                    type: number
+        '400':
+          description: Invalid input
+        '401':
+          description: Invalid API key
+        '403':
+          description: Access or feature denied
+        '404':
+          description: Resource not found in organization or course
+        '429':
+          description: RATE_LIMITED; per-key allowance exhausted
+        '500':
+          description: Render preparation failed; inspect set status before retrying
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: setId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        schema:
+          type: string
+        description: Optional key for safely retrying this mutation
+      operationId: renderLearningBitSet

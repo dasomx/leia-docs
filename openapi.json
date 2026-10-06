@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://api.leia.io/api/v1",
+      "url": "https://api.leia.to/api/v1",
       "description": "Production"
     },
     {
@@ -125,7 +125,10 @@
               "maxLength": 10
             },
             "description": "Additional languages supported in the course",
-            "example": ["en", "ko"]
+            "example": [
+              "en",
+              "ko"
+            ]
           },
           "culturalContext": {
             "type": "string",
@@ -581,16 +584,30 @@
               },
               "voice": {
                 "type": "string",
-                "example": "alloy"
+                "example": "Aoede",
+                "description": "Value returned by GET /narration-voices; overrides the course narration profile"
               },
               "template": {
                 "type": "string",
-                "description": "Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate')"
+                "description": "Active illustrated key returned by GET /slide-templates?method=ILLUSTRATED; required for nano-banana"
+              },
+              "htmlTemplate": {
+                "type": "string",
+                "description": "Active HTML key returned by GET /slide-templates?method=HTML"
               }
             }
           },
           "languageConfig": {
             "$ref": "#/components/schemas/LanguageConfig"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "nano-banana",
+              "gemini-html",
+              "claude-pptx"
+            ],
+            "default": "gemini-html"
           }
         }
       },
@@ -643,12 +660,30 @@
               },
               "template": {
                 "type": "string",
-                "description": "Slide template key (e.g. 'whiteboard', 'flat-illustration-corporate', 'doodle-notebook', 'handwrittenchalkcasual')"
+                "description": "Active illustrated key returned by GET /slide-templates?method=ILLUSTRATED; required for nano-banana"
+              },
+              "voice": {
+                "type": "string",
+                "example": "Aoede",
+                "description": "Value returned by GET /narration-voices; overrides the course narration profile"
+              },
+              "htmlTemplate": {
+                "type": "string",
+                "description": "Active HTML key returned by GET /slide-templates?method=HTML"
               }
             }
           },
           "languageConfig": {
             "$ref": "#/components/schemas/LanguageConfig"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "nano-banana",
+              "gemini-html",
+              "claude-pptx"
+            ],
+            "default": "nano-banana"
           }
         }
       },
@@ -1908,7 +1943,7 @@
                 ],
                 "options": {
                   "slideCount": 6,
-                  "template": "whiteboard",
+                  "template": "<active-template-key>",
                   "language": "en"
                 }
               }
@@ -2415,6 +2450,667 @@
             "$ref": "#/components/responses/500"
           }
         }
+      }
+    },
+    "/slide-templates": {
+      "get": {
+        "summary": "List active organization slide templates (public metadata only)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "key",
+                      "name",
+                      "templateMethod"
+                    ],
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "previewImageUrl": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "templateMethod": {
+                        "type": "string",
+                        "enum": [
+                          "ILLUSTRATED",
+                          "HTML"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Invalid API key"
+          },
+          "403": {
+            "description": "Access or feature denied"
+          },
+          "404": {
+            "description": "Resource not found in organization or course"
+          },
+          "429": {
+            "description": "RATE_LIMITED; per-key allowance exhausted"
+          }
+        },
+        "parameters": [
+          {
+            "name": "method",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ILLUSTRATED",
+                "HTML"
+              ],
+              "default": "ILLUSTRATED"
+            }
+          }
+        ],
+        "operationId": "listSlideTemplates"
+      }
+    },
+    "/narration-voices": {
+      "get": {
+        "summary": "List Gemini narration voices and default Aoede; select via options.voice",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "provider",
+                    "defaultVoice",
+                    "voices"
+                  ],
+                  "properties": {
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "gemini"
+                      ]
+                    },
+                    "defaultVoice": {
+                      "type": "string",
+                      "example": "Aoede"
+                    },
+                    "voices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "value",
+                          "characteristic"
+                        ],
+                        "properties": {
+                          "value": {
+                            "type": "string",
+                            "example": "Kore"
+                          },
+                          "characteristic": {
+                            "type": "string",
+                            "example": "Firm"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Invalid API key"
+          },
+          "403": {
+            "description": "Access or feature denied"
+          },
+          "404": {
+            "description": "Resource not found in organization or course"
+          },
+          "429": {
+            "description": "RATE_LIMITED; per-key allowance exhausted"
+          }
+        },
+        "operationId": "listNarrationVoices"
+      }
+    },
+    "/courses/{courseId}/design-blueprint/generate": {
+      "post": {
+        "summary": "Generate a design blueprint from an active HTML template without saving",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "blueprint"
+                  ],
+                  "properties": {
+                    "blueprint": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Invalid API key"
+          },
+          "403": {
+            "description": "Access or feature denied"
+          },
+          "404": {
+            "description": "Resource not found in organization or course"
+          },
+          "429": {
+            "description": "RATE_LIMITED; per-key allowance exhausted"
+          }
+        },
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional key for safely retrying this mutation"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "inspiredFromTemplateKey": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "inspiredFromTemplateKey"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "generateCourseDesignBlueprint"
+      }
+    },
+    "/courses/{courseId}/design-blueprint": {
+      "put": {
+        "summary": "Save or clear a course design blueprint",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Invalid API key"
+          },
+          "403": {
+            "description": "Access or feature denied"
+          },
+          "404": {
+            "description": "Resource not found in organization or course"
+          },
+          "429": {
+            "description": "RATE_LIMITED; per-key allowance exhausted"
+          }
+        },
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional key for safely retrying this mutation"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "blueprint": {
+                    "type": "string",
+                    "maxLength": 10000,
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "blueprint"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "saveCourseDesignBlueprint"
+      }
+    },
+    "/learning-bits/illustration-styles": {
+      "get": {
+        "summary": "List available Learning Bits illustration styles; feature must be enabled",
+        "responses": {
+          "200": {
+            "description": "Available styles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "key",
+                      "name"
+                    ],
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "previewImageUrl": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Feature not enabled"
+          }
+        },
+        "operationId": "listLearningBitIllustrationStyles"
+      }
+    },
+    "/courses/{courseId}/learning-bits": {
+      "get": {
+        "summary": "List course Learning Bit sets (feature must be enabled)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Learning Bit set; additional fields preserve the internal procedure response. List results include lesson, zipFile and media file relations.",
+                    "required": [
+                      "id",
+                      "courseId",
+                      "lessonId",
+                      "status",
+                      "bits"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "courseId": {
+                        "type": "string"
+                      },
+                      "lessonId": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "renderJobId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "bits": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "title",
+                            "script",
+                            "status"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "script": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "order": {
+                              "type": "integer"
+                            }
+                          },
+                          "additionalProperties": true
+                        }
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Invalid API key"
+          },
+          "403": {
+            "description": "Access or feature denied"
+          },
+          "404": {
+            "description": "Resource not found in organization or course"
+          },
+          "429": {
+            "description": "RATE_LIMITED; per-key allowance exhausted"
+          }
+        },
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "operationId": "listCourseLearningBits"
+      },
+      "post": {
+        "summary": "Create a Learning Bit draft set from an existing course lesson",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Learning Bit set; additional fields preserve the internal procedure response. List results include lesson, zipFile and media file relations.",
+                  "required": [
+                    "id",
+                    "courseId",
+                    "lessonId",
+                    "status",
+                    "bits"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "courseId": {
+                      "type": "string"
+                    },
+                    "lessonId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "renderJobId": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "bits": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "title",
+                          "script",
+                          "status"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "script": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "order": {
+                            "type": "integer"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Invalid API key"
+          },
+          "403": {
+            "description": "Access or feature denied"
+          },
+          "404": {
+            "description": "Resource not found in organization or course"
+          },
+          "429": {
+            "description": "RATE_LIMITED; per-key allowance exhausted"
+          }
+        },
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional key for safely retrying this mutation"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lessonId": {
+                    "type": "string"
+                  },
+                  "requestedCount": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10
+                  },
+                  "illustrationStyleKey": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "lessonId"
+                ]
+              }
+            }
+          }
+        },
+        "operationId": "generateLearningBitDraftSet"
+      }
+    },
+    "/courses/{courseId}/learning-bits/{setId}/render": {
+      "post": {
+        "summary": "Render a Learning Bit set in this course (feature must be enabled)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "setId",
+                    "jobId",
+                    "estimatedCredits"
+                  ],
+                  "properties": {
+                    "setId": {
+                      "type": "string"
+                    },
+                    "jobId": {
+                      "type": "string"
+                    },
+                    "estimatedCredits": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Invalid API key"
+          },
+          "403": {
+            "description": "Access or feature denied"
+          },
+          "404": {
+            "description": "Resource not found in organization or course"
+          },
+          "429": {
+            "description": "RATE_LIMITED; per-key allowance exhausted"
+          },
+          "500": {
+            "description": "Render preparation failed; inspect set status before retrying"
+          }
+        },
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "setId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional key for safely retrying this mutation"
+          }
+        ],
+        "operationId": "renderLearningBitSet"
       }
     }
   }
