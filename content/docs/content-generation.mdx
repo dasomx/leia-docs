@@ -23,21 +23,87 @@ POST /api/v1/courses/{courseId}/lessons/generate-all
 
 ## Slide Generation
 
-Slides are generated using the **nano-banana** illustrated method. You choose a visual template and LEIA produces a slide deck with:
+Slide generation produces slide images, synchronized narration scripts, and voice-over audio. The batch endpoint supports `nano-banana` illustrated slides (the default), `gemini-html`, and `claude-pptx`.
 
-- Per-slide illustrations matching the template style
-- Narration scripts synchronized to each slide
-- Voice-over audio tracks
+### Discover active templates
 
-Available templates: `whiteboard`, `flat-illustration-corporate`, `doodle-notebook`, `handwrittenchalkcasual`
+```http
+GET /api/v1/slide-templates?method=ILLUSTRATED
+GET /api/v1/slide-templates?method=HTML
+```
+
+The [template catalog](/docs/openapi/listSlideTemplates) returns active templates available to your organization, including `key`, `name`, `description`, `previewImageUrl`, and `templateMethod`. Use an illustrated key in `options.template` or an HTML key in `options.htmlTemplate`. Template availability can change: refresh the catalog if a selected key becomes unavailable instead of keeping a permanent hardcoded list.
+
+### Select a narration voice
+
+```http
+GET /api/v1/narration-voices
+```
+
+The [voice catalog](/docs/openapi/listNarrationVoices) returns `provider`, `defaultVoice`, and `voices`. Each voice has a `value` and `characteristic`. Pass a returned value, such as `Kore`, through `options.voice`:
 
 ```http
 POST /api/v1/courses/{courseId}/lessons/generate-slides
 ```
 
+```json
+{
+  "lessonIds": ["lesson-id"],
+  "method": "nano-banana",
+  "options": {
+    "template": "<active illustrated template key>",
+    "voice": "Kore"
+  }
+}
+```
+
+The per-lesson `POST /api/v1/lessons/{lessonId}/slides-narration` endpoint accepts the same `options.voice`. If omitted, the course narration profile takes precedence; otherwise slide narration defaults to `Aoede`. The old `alloy` example was incorrect for the Gemini narration provider.
+
+## Design Blueprint for HTML Slides
+
+1. Select an HTML key from the template catalog.
+2. [Generate a Blueprint](/docs/openapi/generateCourseDesignBlueprint) with `POST /api/v1/courses/{courseId}/design-blueprint/generate` and `{ "inspiredFromTemplateKey": "<active HTML key>" }`. The response contains `blueprint`; generation does not save it.
+3. [Save the Blueprint](/docs/openapi/saveCourseDesignBlueprint) with `PUT /api/v1/courses/{courseId}/design-blueprint` and `{ "blueprint": "<generated or edited text>" }`. Use `null` to clear it.
+4. Generate slides with `method: "gemini-html"`. Saved Blueprints apply to this method.
+
+For example, the batch slide endpoint accepts:
+
+```json
+{
+  "lessonIds": ["lesson-id"],
+  "method": "gemini-html",
+  "options": {
+    "htmlTemplate": "<active HTML key>",
+    "voice": "Kore"
+  }
+}
+```
+
+## Learning Bits
+
+Learning Bits must be enabled for the account; otherwise the API returns `403`. The source lesson must already contain content and belong to the requested course.
+
+1. Discover [illustration styles](/docs/openapi/listLearningBitIllustrationStyles) using `GET /api/v1/learning-bits/illustration-styles`.
+2. [Create a draft set](/docs/openapi/generateLearningBitDraftSet) using `POST /api/v1/courses/{courseId}/learning-bits`:
+
+```json
+{
+  "lessonId": "lesson-id",
+  "requestedCount": 3,
+  "illustrationStyleKey": "<active illustration style key>"
+}
+```
+
+`requestedCount` is optional and accepts 1–10. `illustrationStyleKey` is optional. The response includes the set's `id`, `courseId`, `lessonId`, `status`, and `bits`; use `id` as `setId`.
+
+3. [Render the set](/docs/openapi/renderLearningBitSet) using `POST /api/v1/courses/{courseId}/learning-bits/{setId}/render`. Media preparation happens before rendering is queued, so the request can take time. The response contains `setId`, `jobId`, and `estimatedCredits`.
+4. Poll the returned job and [list the course's sets](/docs/openapi/listCourseLearningBits) using `GET /api/v1/courses/{courseId}/learning-bits` to inspect status and output media.
+
+If rendering returns `500`, inspect the set status before retrying. Draft editing and deletion are not yet exposed through the Partner REST API.
+
 ## Video Export
 
-Once slides are ready (`slidesStatus: READY`), export them as MP4 videos:
+Slide generation can queue video export automatically. Check existing export jobs before requesting another export. To export ready slides as MP4 explicitly:
 
 ```http
 POST /api/v1/courses/{courseId}/lessons/generate-videos
@@ -45,12 +111,14 @@ POST /api/v1/courses/{courseId}/lessons/generate-videos
 
 ## Job Tracking
 
-All generation tasks run asynchronously. Monitor progress via:
+Monitor queued generation and export jobs through:
 
 ```http
 GET /api/v1/courses/{courseId}/jobs
 GET /api/v1/jobs/{jobId}
 ```
+
+Stop polling when a job completes or fails. A progress percentage alone does not prove a worker is still running. Polling consumes the same API key allowance as generation; pause on `429 RATE_LIMITED` and follow the [rate-limit reset rules](/docs/openapi#rate-limiting).
 
 ## Language Configuration
 
